@@ -1,0 +1,263 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import AlphabetModule from '@/components/kids/AlphabetModule';
+import SyllableModule from '@/components/kids/SyllableModule';
+import WordReadingModule from '@/components/kids/WordReadingModule';
+import SentenceModule from '@/components/kids/SentenceModule';
+import QuizArena from '@/components/kids/QuizArena';
+import StickerAlbum from '@/components/kids/StickerAlbum';
+import ParentDashboard from '@/components/parent/ParentDashboard';
+import KidsBackground from '@/components/common/KidsBackground';
+import { getProgress, saveProgress, UserProgress, FONT_OPTIONS } from '@/lib/storage';
+import { playClickSound } from '@/lib/soundEffects';
+import {
+  Star,
+  Sparkles,
+  BookOpen,
+  Volume2,
+  Trophy,
+  Smile,
+  ShieldCheck,
+  Gamepad2,
+  Heart,
+  Type,
+  Gauge,
+} from 'lucide-react';
+
+type TabType = 'alphabet' | 'syllables' | 'words' | 'sentences' | 'quiz' | 'stickers';
+type AppMode = 'kids' | 'parent';
+
+export default function Home() {
+  const [appMode, setAppMode] = useState<AppMode>('kids');
+  const [activeTab, setActiveTab] = useState<TabType>('alphabet');
+  const [progress, setProgress] = useState<UserProgress | null>(null);
+
+  const refreshProgress = () => {
+    setProgress(getProgress());
+  };
+
+  useEffect(() => {
+    refreshProgress();
+  }, []);
+
+  const handleModeChange = (mode: AppMode) => {
+    playClickSound();
+    setAppMode(mode);
+  };
+
+  const handleTabChange = (tab: TabType) => {
+    playClickSound();
+    setActiveTab(tab);
+  };
+
+  const handleCycleFont = () => {
+    playClickSound();
+    if (!progress) return;
+    const fonts: ('lexend' | 'jakarta' | 'inter')[] = ['lexend', 'jakarta', 'inter'];
+    const currentIdx = fonts.indexOf(progress.fontFamily || 'lexend');
+    const nextFont = fonts[(currentIdx + 1) % fonts.length];
+
+    const updated = { ...progress, fontFamily: nextFont };
+    saveProgress(updated);
+    setProgress(updated);
+  };
+
+  const handleCycleSpeed = () => {
+    playClickSound();
+    if (!progress) return;
+    const speeds = [0.65, 0.55, 0.8];
+    const currentRate = progress.speechRate || 0.65;
+    const nextIdx = (speeds.indexOf(currentRate) + 1) % speeds.length;
+    const nextSpeed = speeds[nextIdx === -1 ? 0 : nextIdx];
+
+    const updated = { ...progress, speechRate: nextSpeed };
+    saveProgress(updated);
+    setProgress(updated);
+  };
+
+  const currentFontClass =
+    progress?.fontFamily === 'jakarta'
+      ? "font-['Plus_Jakarta_Sans',sans-serif]"
+      : progress?.fontFamily === 'inter'
+      ? "font-['Inter',sans-serif]"
+      : "font-['Lexend',sans-serif]";
+
+  const currentFontLabel =
+    progress?.fontFamily === 'jakarta'
+      ? 'Plus Jakarta Sans'
+      : progress?.fontFamily === 'inter'
+      ? 'Inter'
+      : 'Lexend (Edukasi)';
+
+  const currentSpeedLabel =
+    progress?.speechRate === 0.55
+      ? '0.55x (Sangat Pelan)'
+      : progress?.speechRate === 0.8
+      ? '0.80x (Sedang)'
+      : '0.65x (Pelan & Jelas)';
+
+  const navTabs: { id: TabType; label: string; emoji: string; color: string }[] = [
+    { id: 'alphabet', label: 'Huruf & Vokal', emoji: '🔤', color: 'bg-orange-500' },
+    { id: 'syllables', label: 'Suku Kata', emoji: '🗣️', color: 'bg-blue-500' },
+    { id: 'words', label: 'Membaca Kata', emoji: '📖', color: 'bg-teal-500' },
+    { id: 'sentences', label: 'Kalimat Pendek', emoji: '🌟', color: 'bg-purple-500' },
+    { id: 'quiz', label: 'Arena Kuis', emoji: '🎮', color: 'bg-rose-500' },
+    { id: 'stickers', label: 'Album Stiker', emoji: '🏆', color: 'bg-amber-500' },
+  ];
+
+  return (
+    <div className={`min-h-screen flex flex-col bg-playful-canvas relative overflow-x-hidden ${currentFontClass}`}>
+      {/* Background Ceria Kartun Dunia Anak */}
+      <KidsBackground />
+
+      {/* Top Navigation Header */}
+      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-amber-200/70 shadow-sm relative">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+          {/* Logo & Brand */}
+          <div className="flex items-center gap-2.5">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-400 to-orange-500 flex items-center justify-center text-white shadow-md shadow-amber-200">
+              <Star className="w-5 h-5 fill-white" />
+            </div>
+            <h1 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight">
+              RafaBintang<span className="text-orange-500">Baca</span>
+            </h1>
+          </div>
+
+          {/* Quick Font & Speed Switchers + Profil Anak */}
+          <div className="flex items-center gap-2 sm:gap-2.5">
+            {/* Tombol Cepat Ganti Tempo Suara */}
+            <button
+              onClick={handleCycleSpeed}
+              title="Klik untuk mengubah tempo suara (Sangat Pelan / Pelan / Sedang)"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-50 hover:bg-orange-100 border border-orange-200 text-xs font-bold text-orange-800 transition"
+            >
+              <Volume2 className="w-3.5 h-3.5 text-orange-600" />
+              <span className="hidden md:inline">Tempo:</span>
+              <span>{currentSpeedLabel}</span>
+            </button>
+
+            {/* Tombol Cepat Ganti Font */}
+            <button
+              onClick={handleCycleFont}
+              title="Klik untuk mengganti tipe font huruf"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs font-bold text-slate-700 transition"
+            >
+              <Type className="w-3.5 h-3.5 text-indigo-600" />
+              <span className="hidden md:inline">Font:</span>
+              <span className="text-indigo-600">{currentFontLabel}</span>
+            </button>
+
+            {progress && (
+              <div className="hidden lg:flex items-center gap-2">
+                <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full text-xs font-extrabold text-slate-700">
+                  <span>{progress.avatar}</span>
+                  <span>{progress.childName}</span>
+                </div>
+
+                <div className="flex items-center gap-1 bg-yellow-400 text-slate-900 px-3 py-1 rounded-full font-black text-xs shadow-sm">
+                  <Star className="w-3.5 h-3.5 fill-slate-900" />
+                  <span>{progress.stars} ⭐</span>
+                </div>
+              </div>
+            )}
+
+            {/* Switcher Mode Anak <-> Mode Orang Tua */}
+            <div className="flex bg-slate-100 p-1 rounded-2xl border border-slate-200">
+              <button
+                onClick={() => handleModeChange('kids')}
+                className={`px-3 py-1 rounded-xl text-xs font-extrabold transition flex items-center gap-1 ${
+                  appMode === 'kids'
+                    ? 'bg-amber-400 text-slate-900 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <Smile className="w-3.5 h-3.5" />
+                <span>Anak</span>
+              </button>
+              <button
+                onClick={() => handleModeChange('parent')}
+                className={`px-3 py-1 rounded-xl text-xs font-extrabold transition flex items-center gap-1 ${
+                  appMode === 'parent'
+                    ? 'bg-indigo-600 text-white shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Orang Tua</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Tab Navigasi Mode Anak */}
+        {appMode === 'kids' && (
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-2 pb-3 overflow-x-auto scrollbar-none flex gap-2">
+            {navTabs.map((tab) => {
+              const isActive = activeTab === tab.id;
+
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => handleTabChange(tab.id)}
+                  className={`flex-shrink-0 px-3.5 py-2 rounded-2xl font-extrabold text-xs sm:text-sm transition flex items-center gap-2 btn-kids-pop ${
+                    isActive
+                      ? `${tab.color} text-white shadow-md`
+                      : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
+                  }`}
+                >
+                  <span className="text-base">{tab.emoji}</span>
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </header>
+
+      {/* Main Content */}
+      <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 relative z-10">
+        {/* Banner Info Fitur Suara & Font */}
+        <div className="bg-gradient-to-r from-amber-50/90 via-yellow-50/90 to-orange-50/90 backdrop-blur-sm border border-amber-200 rounded-2xl px-4 py-2.5 mb-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-700 text-xs sm:text-sm font-semibold shadow-sm">
+          <div className="flex items-center gap-2">
+            <Volume2 className="w-4 h-4 text-orange-600 flex-shrink-0" />
+            <span>
+              💡 <strong>Tempo Suara:</strong> Diatur ke tempo santai ({currentSpeedLabel}) agar artikulasi bunyi huruf & suku kata terdengar jelas bagi anak TK.
+            </span>
+          </div>
+          <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+            <span>Font aktif: <strong className="text-indigo-600">{currentFontLabel}</strong></span>
+          </div>
+        </div>
+
+        {/* Render Konten Sesuai Mode */}
+        {appMode === 'parent' ? (
+          <ParentDashboard onProgressUpdate={refreshProgress} />
+        ) : (
+          <div>
+            {activeTab === 'alphabet' && <AlphabetModule onProgressUpdate={refreshProgress} />}
+            {activeTab === 'syllables' && <SyllableModule onProgressUpdate={refreshProgress} />}
+            {activeTab === 'words' && <WordReadingModule onProgressUpdate={refreshProgress} />}
+            {activeTab === 'sentences' && <SentenceModule onProgressUpdate={refreshProgress} />}
+            {activeTab === 'quiz' && <QuizArena onProgressUpdate={refreshProgress} />}
+            {activeTab === 'stickers' && <StickerAlbum onProgressUpdate={refreshProgress} />}
+          </div>
+        )}
+      </main>
+
+      {/* Footer Ceria */}
+      <footer className="bg-white/80 backdrop-blur-sm border-t border-amber-200/60 py-5 text-center text-xs text-slate-500 relative z-10">
+        <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="flex items-center gap-1 text-slate-600 font-bold">
+            <span>RafaBintangBaca</span>
+            <span className="text-amber-500">⭐</span>
+            <span>- Pendamping Belajar Membaca Anak Usia Dini</span>
+          </div>
+          <div className="text-slate-400">
+            Tempo suara diperlambat khusus untuk stimulasi fonik anak usia Taman Kanak-Kanak.
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
