@@ -1,11 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { STICKER_COLLECTION, Sticker } from '@/data/curriculum';
 import { getProgress, UserProgress } from '@/lib/storage';
 import { playClickSound, playCelebrationSound } from '@/lib/soundEffects';
 import { speakText } from '@/lib/speech';
-import { Star, Lock, Sparkles, Award } from 'lucide-react';
+import { Star, Lock, Sparkles, Award, CheckCircle2 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface StickerAlbumProps {
@@ -15,18 +15,39 @@ interface StickerAlbumProps {
 export default function StickerAlbum({ onProgressUpdate }: StickerAlbumProps) {
   const progress: UserProgress = getProgress();
 
+  // Hitung jumlah stiker yang sudah terbuka berdasarkan bintang saat ini
+  const unlockedCount = STICKER_COLLECTION.filter(
+    (stk) =>
+      progress.stars >= stk.unlockedAtStars ||
+      (progress.unlockedStickerIds && progress.unlockedStickerIds.includes(stk.id))
+  ).length;
+
+  // Sambut anak dengan confetti jika ada stiker baru yang terbuka
+  useEffect(() => {
+    if (unlockedCount > 1) {
+      confetti({
+        particleCount: 40,
+        spread: 60,
+        origin: { y: 0.6 },
+      });
+    }
+  }, [unlockedCount]);
+
   const handleStickerClick = (sticker: Sticker, isUnlocked: boolean) => {
     playClickSound();
     if (isUnlocked) {
       playCelebrationSound();
       confetti({
-        particleCount: 50,
-        spread: 60,
+        particleCount: 60,
+        spread: 70,
         origin: { y: 0.6 },
       });
-      speakText(`Hebat! Stiker ${sticker.title}!`);
+      speakText(`Hebat! Stiker ${sticker.title} sudah terbuka!`);
     } else {
-      speakText(`Kumpulkan ${sticker.unlockedAtStars} bintang untuk membuka stiker ${sticker.title}`);
+      const needed = Math.max(1, sticker.unlockedAtStars - progress.stars);
+      speakText(
+        `Kumpulkan ${needed} bintang lagi untuk membuka stiker ${sticker.title}!`
+      );
     }
   };
 
@@ -39,22 +60,31 @@ export default function StickerAlbum({ onProgressUpdate }: StickerAlbumProps) {
             <Sparkles className="w-4 h-4 text-yellow-100" />
             Galeri Penghargaan
           </div>
-          <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
+          <h2 className="text-2xl md:text-3xl font-black tracking-tight">
             Album Koleksi Stiker Juara 🌟
           </h2>
           <p className="text-amber-100 text-sm md:text-base mt-1">
-            Kumpulkan bintang dari setiap modul dan kuis untuk membuka stiker-stiker lucu!
+            Stiker otomatis terbuka saat jumlah bintang belajarmu bertambah!
           </p>
         </div>
 
-        {/* Kotak Bintang Anak */}
-        <div className="bg-white/20 backdrop-blur-md px-6 py-3 rounded-2xl border border-white/30 flex items-center gap-3">
-          <Star className="w-8 h-8 fill-yellow-300 text-yellow-300 animate-bounce-slow" />
-          <div>
+        {/* Kotak Bintang Anak & Counter Stiker */}
+        <div className="flex items-center gap-3">
+          <div className="bg-white/20 backdrop-blur-md px-5 py-3 rounded-2xl border border-white/30 flex items-center gap-3">
+            <Star className="w-8 h-8 fill-yellow-300 text-yellow-300 animate-bounce-slow" />
+            <div>
+              <span className="block text-2xl font-black text-white leading-none">
+                {progress.stars}
+              </span>
+              <span className="text-xs font-semibold text-yellow-100">Bintang Kamu</span>
+            </div>
+          </div>
+
+          <div className="bg-white/20 backdrop-blur-md px-4 py-3 rounded-2xl border border-white/30 text-center">
             <span className="block text-2xl font-black text-white leading-none">
-              {progress.stars}
+              {unlockedCount}/{STICKER_COLLECTION.length}
             </span>
-            <span className="text-xs font-semibold text-yellow-100">Bintang Kamu</span>
+            <span className="text-xs font-semibold text-yellow-100">Terbuka</span>
           </div>
         </div>
       </div>
@@ -62,7 +92,18 @@ export default function StickerAlbum({ onProgressUpdate }: StickerAlbumProps) {
       {/* Grid Stiker */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
         {STICKER_COLLECTION.map((sticker) => {
-          const isUnlocked = progress.unlockedStickerIds.includes(sticker.id);
+          // Logika pembukaan stiker langsung berdasarkan bintang anak atau id yang tersimpan
+          const isUnlocked =
+            progress.stars >= sticker.unlockedAtStars ||
+            (progress.unlockedStickerIds &&
+              progress.unlockedStickerIds.includes(sticker.id));
+
+          const percentProgress = Math.min(
+            100,
+            Math.round((progress.stars / sticker.unlockedAtStars) * 100)
+          );
+
+          const remainingStars = Math.max(0, sticker.unlockedAtStars - progress.stars);
 
           return (
             <div
@@ -70,25 +111,29 @@ export default function StickerAlbum({ onProgressUpdate }: StickerAlbumProps) {
               onClick={() => handleStickerClick(sticker, isUnlocked)}
               className={`rounded-3xl p-5 border-2 transition cursor-pointer flex flex-col items-center text-center btn-kids-pop relative ${
                 isUnlocked
-                  ? 'bg-white border-amber-300 shadow-md hover:shadow-lg'
-                  : 'bg-slate-50 border-dashed border-slate-300 opacity-70'
+                  ? 'bg-white border-amber-300 shadow-md hover:shadow-xl ring-2 ring-amber-100/70'
+                  : 'bg-white/70 border-dashed border-slate-300 opacity-80 hover:opacity-100'
               }`}
             >
               {/* Ikon Kunci atau Bintang */}
               <div className="absolute top-3 right-3">
                 {isUnlocked ? (
-                  <span className="text-amber-500">
+                  <span className="text-amber-500 bg-amber-50 p-1 rounded-full">
                     <Award className="w-4 h-4" />
                   </span>
                 ) : (
-                  <span className="text-slate-400">
+                  <span className="text-slate-400 bg-slate-100 p-1 rounded-full">
                     <Lock className="w-3.5 h-3.5" />
                   </span>
                 )}
               </div>
 
               {/* Emoji Stiker */}
-              <div className={`text-6xl my-3 select-none ${isUnlocked ? 'animate-pulse-subtle' : 'filter grayscale'}`}>
+              <div
+                className={`text-6xl my-3 select-none transition-transform duration-200 hover:scale-110 ${
+                  isUnlocked ? 'animate-pulse-subtle' : 'filter grayscale opacity-45'
+                }`}
+              >
                 {sticker.emoji}
               </div>
 
@@ -100,16 +145,25 @@ export default function StickerAlbum({ onProgressUpdate }: StickerAlbumProps) {
                 {sticker.description}
               </p>
 
-              {/* Syarat Buka */}
+              {/* Status / Syarat Buka & Progress Bar */}
               <div className="mt-auto w-full pt-2 border-t border-slate-100">
                 {isUnlocked ? (
-                  <span className="inline-block text-[11px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full">
-                    ✓ Sudah Terbuka
+                  <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-100/80 px-3 py-1 rounded-full shadow-xs">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" /> Sudah Terbuka
                   </span>
                 ) : (
-                  <span className="inline-block text-[11px] font-bold text-slate-500 bg-slate-200 px-2.5 py-0.5 rounded-full">
-                    Butuh {sticker.unlockedAtStars} ⭐
-                  </span>
+                  <div className="space-y-1">
+                    <div className="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                      <div
+                        className="bg-amber-400 h-full rounded-full transition-all duration-500"
+                        style={{ width: `${percentProgress}%` }}
+                      />
+                    </div>
+                    <div className="flex justify-between items-center text-[10px] font-bold text-slate-500 pt-0.5">
+                      <span>Butuh {sticker.unlockedAtStars} ⭐</span>
+                      <span className="text-amber-600">Kurang {remainingStars} lagi</span>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>

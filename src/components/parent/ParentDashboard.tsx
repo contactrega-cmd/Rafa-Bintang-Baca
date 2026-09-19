@@ -5,7 +5,7 @@ import {
   getProgress,
   saveProgress,
   resetProgress,
-  AVATAR_OPTIONS,
+  ANIMAL_CHARACTERS,
   FONT_OPTIONS,
   UserProgress,
 } from '@/lib/storage';
@@ -377,10 +377,10 @@ export default function ParentDashboard({ onProgressUpdate }: ParentDashboardPro
 
             <div>
               <label className="block text-xs font-bold text-slate-600 uppercase mb-2">
-                Pilih Karakter Maskot Anak:
+                Pilih Karakter Maskot Hewan:
               </label>
               <div className="grid grid-cols-3 gap-2">
-                {AVATAR_OPTIONS.map((av) => (
+                {ANIMAL_CHARACTERS.map((av) => (
                   <button
                     key={av.id}
                     type="button"
@@ -392,7 +392,7 @@ export default function ParentDashboard({ onProgressUpdate }: ParentDashboardPro
                     }`}
                   >
                     <span className="text-2xl">{av.emoji}</span>
-                    <span className="text-xs">{av.label.split(' ')[0]}</span>
+                    <span className="text-xs">{av.name.split(' ')[0]}</span>
                   </button>
                 ))}
               </div>

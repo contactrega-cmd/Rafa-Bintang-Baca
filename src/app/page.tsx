@@ -9,7 +9,15 @@ import QuizArena from '@/components/kids/QuizArena';
 import StickerAlbum from '@/components/kids/StickerAlbum';
 import ParentDashboard from '@/components/parent/ParentDashboard';
 import KidsBackground from '@/components/common/KidsBackground';
-import { getProgress, saveProgress, UserProgress, FONT_OPTIONS } from '@/lib/storage';
+import ProfileLoginScreen from '@/components/auth/ProfileLoginScreen';
+import {
+  getProgress,
+  saveProgress,
+  getActiveProfile,
+  setActiveProfileId,
+  UserProgress,
+  FONT_OPTIONS,
+} from '@/lib/storage';
 import { playClickSound } from '@/lib/soundEffects';
 import {
   Star,
@@ -23,6 +31,7 @@ import {
   Heart,
   Type,
   Gauge,
+  Users,
 } from 'lucide-react';
 
 type TabType = 'alphabet' | 'syllables' | 'words' | 'sentences' | 'quiz' | 'stickers';
@@ -32,14 +41,37 @@ export default function Home() {
   const [appMode, setAppMode] = useState<AppMode>('kids');
   const [activeTab, setActiveTab] = useState<TabType>('alphabet');
   const [progress, setProgress] = useState<UserProgress | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isClientLoaded, setIsClientLoaded] = useState(false);
 
   const refreshProgress = () => {
-    setProgress(getProgress());
+    const active = getActiveProfile();
+    if (active) {
+      setProgress(active);
+      setIsLoggedIn(true);
+    } else {
+      setProgress(null);
+      setIsLoggedIn(false);
+    }
   };
 
   useEffect(() => {
     refreshProgress();
+    setIsClientLoaded(true);
   }, []);
+
+  const handleSelectProfile = (selected: UserProgress) => {
+    setActiveProfileId(selected.id);
+    setProgress(selected);
+    setIsLoggedIn(true);
+  };
+
+  const handleSwitchAccount = () => {
+    playClickSound();
+    setActiveProfileId(null);
+    setProgress(null);
+    setIsLoggedIn(false);
+  };
 
   const handleModeChange = (mode: AppMode) => {
     playClickSound();
@@ -106,6 +138,33 @@ export default function Home() {
     { id: 'stickers', label: 'Album Stiker', emoji: '🏆', color: 'bg-amber-500' },
   ];
 
+  // Selama client storage sedang diinisialisasi
+  if (!isClientLoaded) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-playful-canvas font-sans">
+        <div className="text-center">
+          <div className="w-16 h-16 rounded-3xl bg-amber-400 text-white flex items-center justify-center text-3xl mx-auto mb-3 animate-bounce">
+            ⭐
+          </div>
+          <span className="font-extrabold text-slate-700 text-lg">
+            Membuka RafaBintangBaca...
+          </span>
+        </div>
+      </div>
+    );
+  }
+
+  // 1. JIKA BELUM MEMILIH AKUN / MASUK, TAMPILKAN HALAMAN PILIH PROFIL & KARAKTER HEWAN
+  if (!isLoggedIn) {
+    return (
+      <div className={`min-h-screen flex flex-col bg-playful-canvas relative overflow-x-hidden ${currentFontClass}`}>
+        <KidsBackground />
+        <ProfileLoginScreen onSelectProfile={handleSelectProfile} />
+      </div>
+    );
+  }
+
+  // 2. JIKA SUDAH MEMILIH AKUN, TAMPILKAN APLIKASI UTAMA
   return (
     <div className={`min-h-screen flex flex-col bg-playful-canvas relative overflow-x-hidden ${currentFontClass}`}>
       {/* Background Ceria Kartun Dunia Anak */}
@@ -124,7 +183,7 @@ export default function Home() {
             </h1>
           </div>
 
-          {/* Quick Font & Speed Switchers + Profil Anak */}
+          {/* Quick Controls, Profil Anak & Ganti Akun */}
           <div className="flex items-center gap-2 sm:gap-2.5">
             {/* Tombol Cepat Ganti Tempo Suara */}
             <button
@@ -148,17 +207,27 @@ export default function Home() {
               <span className="text-indigo-600">{currentFontLabel}</span>
             </button>
 
+            {/* Profil Anak Aktif & Tombol Ganti Akun */}
             {progress && (
-              <div className="hidden lg:flex items-center gap-2">
-                <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full text-xs font-extrabold text-slate-700">
-                  <span>{progress.avatar}</span>
-                  <span>{progress.childName}</span>
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <div
+                  onClick={handleSwitchAccount}
+                  className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 px-3 py-1 rounded-full text-xs font-extrabold text-slate-700 cursor-pointer hover:bg-amber-100 transition shadow-xs"
+                  title="Klik untuk ganti akun anak"
+                >
+                  <span className="text-base">{progress.avatar}</span>
+                  <span className="max-w-[80px] sm:max-w-none truncate">{progress.childName}</span>
+                  <span className="text-[10px] text-amber-600 font-black">({progress.stars} ⭐)</span>
                 </div>
 
-                <div className="flex items-center gap-1 bg-yellow-400 text-slate-900 px-3 py-1 rounded-full font-black text-xs shadow-sm">
-                  <Star className="w-3.5 h-3.5 fill-slate-900" />
-                  <span>{progress.stars} ⭐</span>
-                </div>
+                <button
+                  onClick={handleSwitchAccount}
+                  title="Ganti akun / masuk akun anak lain"
+                  className="flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-orange-100 hover:text-orange-700 text-xs font-bold text-slate-600 transition btn-kids-pop"
+                >
+                  <Users className="w-3.5 h-3.5 text-orange-600" />
+                  <span className="hidden lg:inline">Ganti Akun</span>
+                </button>
               </div>
             )}
 
@@ -222,7 +291,7 @@ export default function Home() {
           <div className="flex items-center gap-2">
             <Volume2 className="w-4 h-4 text-orange-600 flex-shrink-0" />
             <span>
-              💡 <strong>Tempo Suara:</strong> Diatur ke tempo santai ({currentSpeedLabel}) agar artikulasi bunyi huruf & suku kata terdengar jelas bagi anak TK.
+              💡 <strong>Halo {progress?.childName || 'Adik Pintar'}!</strong> Sentuh huruf atau suku kata untuk mendengar suaranya.
             </span>
           </div>
           <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
@@ -251,10 +320,10 @@ export default function Home() {
           <div className="flex items-center gap-1 text-slate-600 font-bold">
             <span>RafaBintangBaca</span>
             <span className="text-amber-500">⭐</span>
-            <span>- Pendamping Belajar Membaca Anak Usia Dini</span>
+            <span>- Akun: {progress?.childName} ({progress?.avatar})</span>
           </div>
           <div className="text-slate-400">
-            Tempo suara diperlambat khusus untuk stimulasi fonik anak usia Taman Kanak-Kanak.
+            Didesain khusus untuk stimulasi fonik anak usia Taman Kanak-Kanak.
           </div>
         </div>
       </footer>
