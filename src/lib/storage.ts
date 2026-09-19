@@ -89,9 +89,9 @@ export const INITIAL_DEFAULT_PROFILE: UserProgress = {
   learnedWords: [],
   unlockedStickerIds: [],
   quizHistory: [],
-  speechRate: 0.65,
+  speechRate: 0.55, // Default tempo 0.55x (Sangat Pelan & Jelas)
   dailyPracticeMinutes: 0,
-  fontFamily: 'lexend',
+  fontFamily: 'jakarta', // Default font Plus Jakarta Sans
   createdAt: new Date().toISOString(),
 };
 
@@ -141,7 +141,12 @@ export function getAllProfiles(): UserProgress[] {
           }
         }
 
-        return filtered.map((p) => syncUnlockedStickers(p));
+        return filtered.map((p) => {
+          // Selalu gunakan font Plus Jakarta Sans dan tempo default 0.55x
+          p.fontFamily = 'jakarta';
+          p.speechRate = 0.55;
+          return syncUnlockedStickers(p);
+        });
       }
     }
 
@@ -205,9 +210,9 @@ export function createProfile(name: string, animalId: string): UserProgress {
     learnedWords: [],
     unlockedStickerIds: [],
     quizHistory: [],
-    speechRate: 0.65,
+    speechRate: 0.55, // Default 0.55x
     dailyPracticeMinutes: 0,
-    fontFamily: 'lexend',
+    fontFamily: 'jakarta', // Default Plus Jakarta Sans
     createdAt: new Date().toISOString(),
   };
 

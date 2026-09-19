@@ -16,7 +16,6 @@ import {
   getActiveProfile,
   setActiveProfileId,
   UserProgress,
-  FONT_OPTIONS,
 } from '@/lib/storage';
 import { playClickSound } from '@/lib/soundEffects';
 import {
@@ -83,51 +82,7 @@ export default function Home() {
     setActiveTab(tab);
   };
 
-  const handleCycleFont = () => {
-    playClickSound();
-    if (!progress) return;
-    const fonts: ('lexend' | 'jakarta' | 'inter')[] = ['lexend', 'jakarta', 'inter'];
-    const currentIdx = fonts.indexOf(progress.fontFamily || 'lexend');
-    const nextFont = fonts[(currentIdx + 1) % fonts.length];
-
-    const updated = { ...progress, fontFamily: nextFont };
-    saveProgress(updated);
-    setProgress(updated);
-  };
-
-  const handleCycleSpeed = () => {
-    playClickSound();
-    if (!progress) return;
-    const speeds = [0.65, 0.55, 0.8];
-    const currentRate = progress.speechRate || 0.65;
-    const nextIdx = (speeds.indexOf(currentRate) + 1) % speeds.length;
-    const nextSpeed = speeds[nextIdx === -1 ? 0 : nextIdx];
-
-    const updated = { ...progress, speechRate: nextSpeed };
-    saveProgress(updated);
-    setProgress(updated);
-  };
-
-  const currentFontClass =
-    progress?.fontFamily === 'jakarta'
-      ? "font-['Plus_Jakarta_Sans',sans-serif]"
-      : progress?.fontFamily === 'inter'
-      ? "font-['Inter',sans-serif]"
-      : "font-['Lexend',sans-serif]";
-
-  const currentFontLabel =
-    progress?.fontFamily === 'jakarta'
-      ? 'Plus Jakarta Sans'
-      : progress?.fontFamily === 'inter'
-      ? 'Inter'
-      : 'Lexend (Edukasi)';
-
-  const currentSpeedLabel =
-    progress?.speechRate === 0.55
-      ? '0.55x (Sangat Pelan)'
-      : progress?.speechRate === 0.8
-      ? '0.80x (Sedang)'
-      : '0.65x (Pelan & Jelas)';
+  const currentFontClass = "font-['Plus_Jakarta_Sans',sans-serif]";
 
   const navTabs: { id: TabType; label: string; emoji: string; color: string }[] = [
     { id: 'alphabet', label: 'Huruf & Vokal', emoji: '🔤', color: 'bg-orange-500' },
@@ -183,29 +138,8 @@ export default function Home() {
             </h1>
           </div>
 
-          {/* Quick Controls, Profil Anak & Ganti Akun */}
+          {/* Profil Anak & Ganti Akun */}
           <div className="flex items-center gap-2 sm:gap-2.5">
-            {/* Tombol Cepat Ganti Tempo Suara */}
-            <button
-              onClick={handleCycleSpeed}
-              title="Klik untuk mengubah tempo suara (Sangat Pelan / Pelan / Sedang)"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-orange-50 hover:bg-orange-100 border border-orange-200 text-xs font-bold text-orange-800 transition"
-            >
-              <Volume2 className="w-3.5 h-3.5 text-orange-600" />
-              <span className="hidden md:inline">Tempo:</span>
-              <span>{currentSpeedLabel}</span>
-            </button>
-
-            {/* Tombol Cepat Ganti Font */}
-            <button
-              onClick={handleCycleFont}
-              title="Klik untuk mengganti tipe font huruf"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs font-bold text-slate-700 transition"
-            >
-              <Type className="w-3.5 h-3.5 text-indigo-600" />
-              <span className="hidden md:inline">Font:</span>
-              <span className="text-indigo-600">{currentFontLabel}</span>
-            </button>
 
             {/* Profil Anak Aktif & Tombol Ganti Akun */}
             {progress && (
@@ -286,17 +220,12 @@ export default function Home() {
 
       {/* Main Content */}
       <main className="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 py-6 relative z-10">
-        {/* Banner Info Fitur Suara & Font */}
-        <div className="bg-gradient-to-r from-amber-50/90 via-yellow-50/90 to-orange-50/90 backdrop-blur-sm border border-amber-200 rounded-2xl px-4 py-2.5 mb-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-700 text-xs sm:text-sm font-semibold shadow-sm">
-          <div className="flex items-center gap-2">
-            <Volume2 className="w-4 h-4 text-orange-600 flex-shrink-0" />
-            <span>
-              💡 <strong>Halo {progress?.childName || 'Sobat Cilik'}!</strong> Sentuh huruf atau suku kata untuk mendengar suaranya.
-            </span>
-          </div>
-          <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-            <span>Font aktif: <strong className="text-indigo-600">{currentFontLabel}</strong></span>
-          </div>
+        {/* Banner Info Fitur Suara */}
+        <div className="bg-gradient-to-r from-amber-50/90 via-yellow-50/90 to-orange-50/90 backdrop-blur-sm border border-amber-200 rounded-2xl px-4 py-2.5 mb-6 flex items-center gap-2 text-slate-700 text-xs sm:text-sm font-semibold shadow-sm">
+          <Volume2 className="w-4 h-4 text-orange-600 flex-shrink-0" />
+          <span>
+            💡 <strong>Halo {progress?.childName || 'Sobat Cilik'}!</strong> Sentuh huruf atau suku kata untuk mendengar suaranya.
+          </span>
         </div>
 
         {/* Render Konten Sesuai Mode */}

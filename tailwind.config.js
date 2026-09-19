@@ -8,8 +8,8 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Lexend"', '"Plus Jakarta Sans"', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
-        reading: ['"Lexend"', 'sans-serif'],
+        sans: ['"Plus Jakarta Sans"', 'Inter', 'system-ui', '-apple-system', 'sans-serif'],
+        reading: ['"Plus Jakarta Sans"', 'sans-serif'],
         clean: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
       },
       colors: {

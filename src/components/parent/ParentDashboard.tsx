@@ -6,7 +6,6 @@ import {
   saveProgress,
   resetProgress,
   ANIMAL_CHARACTERS,
-  FONT_OPTIONS,
   UserProgress,
 } from '@/lib/storage';
 import { ALPHABET_DATA, SYLLABLE_GROUPS, READING_WORDS } from '@/data/curriculum';
@@ -34,8 +33,8 @@ export default function ParentDashboard({ onProgressUpdate }: ParentDashboardPro
   const [progress, setProgress] = useState<UserProgress>(getProgress());
   const [editingName, setEditingName] = useState(progress.childName);
   const [selectedAvatar, setSelectedAvatar] = useState(progress.avatar);
-  const [speechRate, setSpeechRate] = useState(progress.speechRate);
-  const [selectedFont, setSelectedFont] = useState(progress.fontFamily || 'lexend');
+  const speechRate = 0.55;
+  const selectedFont = 'jakarta';
   const [isSavedNotice, setIsSavedNotice] = useState(false);
 
   const totalLetters = ALPHABET_DATA.length;
@@ -57,8 +56,8 @@ export default function ParentDashboard({ onProgressUpdate }: ParentDashboardPro
       ...progress,
       childName: editingName.trim() || 'Rafa',
       avatar: selectedAvatar,
-      speechRate: speechRate,
-      fontFamily: selectedFont,
+      speechRate: 0.55,
+      fontFamily: 'jakarta',
     };
     saveProgress(updated);
     setProgress(updated);
@@ -71,8 +70,8 @@ export default function ParentDashboard({ onProgressUpdate }: ParentDashboardPro
   const handleTestSpeech = () => {
     playClickSound();
     stopSpeech();
-    speakText('Halo Ayah dan Bunda! Suara pelafalan membaca sudah siap digunakan.', {
-      rate: speechRate,
+    speakText('Halo Ayah dan Bunda! Suara pelafalan membaca sudah siap digunakan pada tempo pelan.', {
+      rate: 0.55,
     });
   };
 
@@ -88,7 +87,6 @@ export default function ParentDashboard({ onProgressUpdate }: ParentDashboardPro
       setProgress(fresh);
       setEditingName(fresh.childName);
       setSelectedAvatar(fresh.avatar);
-      setSelectedFont(fresh.fontFamily || 'lexend');
       onProgressUpdate();
     }
   };
@@ -278,7 +276,7 @@ export default function ParentDashboard({ onProgressUpdate }: ParentDashboardPro
               <li className="flex items-start gap-2">
                 <span className="text-amber-500 font-bold">•</span>
                 <span>
-                  <strong>Bentuk Huruf Jelas:</strong> Menggunakan font edukasi seperti <em>Lexend</em> membantu anak membedakan bentuk huruf yang mirip (seperti b, d, p, q).
+                  <strong>Bentuk Huruf Jelas:</strong> Menggunakan font edukasi seperti <em>Plus Jakarta Sans</em> membantu anak membedakan bentuk huruf yang mirip (seperti b, d, p, q) secara rapi dan tegas.
                 </span>
               </li>
               <li className="flex items-start gap-2">
@@ -304,58 +302,35 @@ export default function ParentDashboard({ onProgressUpdate }: ParentDashboardPro
         </div>
       </div>
 
-      {/* Pengaturan Tipe Font Huruf, Suara & Profil Anak */}
+      {/* Pengaturan Profil Anak & Audio */}
       <div className="bg-white p-6 md:p-8 rounded-3xl border border-slate-200 shadow-sm">
         <h3 className="text-lg font-black text-slate-800 mb-6 flex items-center gap-2">
           <Settings className="w-5 h-5 text-slate-600" />
-          Pengaturan Tipografi Huruf, Audio & Profil
+          Pengaturan Profil Anak & Pengujian Audio
         </h3>
 
-        {/* Pemilihan Font Huruf Ramah Membaca */}
-        <div className="mb-8 p-5 rounded-2xl bg-slate-50 border border-slate-200">
-          <div className="flex items-center gap-2 mb-2">
-            <Type className="w-5 h-5 text-indigo-600" />
-            <label className="text-sm font-black text-slate-800 uppercase tracking-wide">
-              Pilihan Font Huruf (Bebas Gaya Komik / Sangat Mudah Dibaca):
-            </label>
+        {/* Informasi Standar Edukasi: Font & Tempo */}
+        <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-100 flex items-start gap-3">
+            <div className="p-2 rounded-xl bg-indigo-600 text-white mt-0.5">
+              <Type className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="text-xs font-bold text-slate-500 block uppercase">Font Huruf Standar:</span>
+              <strong className="text-sm font-black text-indigo-950 block">Plus Jakarta Sans (Aktif)</strong>
+              <span className="text-[11px] text-slate-600">Bentuk kurva simetris, bersih, bebas gaya komik, sangat nyaman untuk mata anak.</span>
+            </div>
           </div>
-          <p className="text-xs text-slate-500 mb-4">
-            Pilih bentuk huruf yang paling mudah dikenali oleh anak saat belajar membaca.
-          </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {FONT_OPTIONS.map((font) => (
-              <div
-                key={font.id}
-                onClick={() => {
-                  playClickSound();
-                  setSelectedFont(font.id as 'lexend' | 'jakarta' | 'inter');
-                }}
-                className={`p-4 rounded-2xl border-2 cursor-pointer transition flex flex-col justify-between ${
-                  selectedFont === font.id
-                    ? 'border-indigo-600 bg-white shadow-md ring-2 ring-indigo-100'
-                    : 'border-slate-200 bg-white/70 hover:border-slate-300'
-                }`}
-              >
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <h5 className="font-extrabold text-sm text-slate-800">{font.name}</h5>
-                    {selectedFont === font.id && (
-                      <span className="text-[10px] bg-indigo-600 text-white font-bold px-2 py-0.5 rounded-full">
-                        Aktif
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-[11px] text-slate-500 mb-3">{font.description}</p>
-                </div>
-
-                {/* Pratinjau Teks */}
-                <div className={`p-3 bg-slate-50 rounded-xl border border-slate-100 text-center ${font.cssClass}`}>
-                  <span className="block text-xl font-bold text-indigo-700">Aa Bb Cc Dd</span>
-                  <span className="block text-xs font-semibold text-slate-600 mt-1">baju • bola • kuda</span>
-                </div>
-              </div>
-            ))}
+          <div className="p-4 rounded-2xl bg-amber-50/70 border border-amber-100 flex items-start gap-3">
+            <div className="p-2 rounded-xl bg-amber-500 text-white mt-0.5">
+              <Volume2 className="w-4 h-4" />
+            </div>
+            <div>
+              <span className="text-xs font-bold text-slate-500 block uppercase">Tempo Pelafalan Suara:</span>
+              <strong className="text-sm font-black text-amber-950 block">0.55x (Sangat Pelan & Jelas)</strong>
+              <span className="text-[11px] text-slate-600">Artikulasi vokal & konsonan diucapkan santai agar mudah ditirukan anak TK.</span>
+            </div>
           </div>
         </div>
 
@@ -371,7 +346,7 @@ export default function ParentDashboard({ onProgressUpdate }: ParentDashboardPro
                 value={editingName}
                 onChange={(e) => setEditingName(e.target.value)}
                 className="w-full px-4 py-2.5 rounded-2xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-400 font-bold text-slate-800"
-                placeholder="Contoh: Budi / Aisyah"
+                placeholder="Contoh: Rafa / Aisyah"
               />
             </div>
 
@@ -399,37 +374,23 @@ export default function ParentDashboard({ onProgressUpdate }: ParentDashboardPro
             </div>
           </div>
 
-          {/* Pengaturan Audio / Kecepatan Suara */}
-          <div className="space-y-5">
+          {/* Pengujian Audio & Aksi */}
+          <div className="space-y-4 flex flex-col justify-between">
             <div>
-              <div className="flex justify-between items-center mb-1">
-                <label className="text-xs font-bold text-slate-600 uppercase">
-                  Kecepatan Suara Pelafalan (Speech Rate):
-                </label>
-                <span className="text-xs font-black text-indigo-600">
-                  {speechRate <= 0.58 ? '0.55x (Sangat Pelan / Pemula)' : speechRate <= 0.70 ? '0.65x (Pelan & Jelas / Rekomendasi TK)' : '0.80x (Sedang / Sudah Lancar)'}
-                </span>
-              </div>
-              <div className="grid grid-cols-3 gap-2 mt-2">
-                {[
-                  { rate: 0.55, label: 'Sangat Pelan (0.55x)' },
-                  { rate: 0.65, label: 'Pelan & Jelas (0.65x) ⭐' },
-                  { rate: 0.8, label: 'Sedang (0.80x)' },
-                ].map((item) => (
-                  <button
-                    key={item.rate}
-                    type="button"
-                    onClick={() => setSpeechRate(item.rate)}
-                    className={`py-2 px-2 rounded-xl text-xs font-bold border transition ${
-                      speechRate === item.rate
-                        ? 'border-indigo-600 bg-indigo-600 text-white shadow-sm'
-                        : 'border-slate-200 text-slate-700 hover:bg-slate-50'
-                    }`}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
+              <label className="block text-xs font-bold text-slate-600 uppercase mb-2">
+                Uji Pelafalan Suara:
+              </label>
+              <p className="text-xs text-slate-500 mb-3">
+                Tekan tombol di bawah untuk mendengarkan kejernihan pelafalan audio bahasa Indonesia pada tempo 0.55x.
+              </p>
+              {/* Tombol Uji Coba Suara */}
+              <button
+                type="button"
+                onClick={handleTestSpeech}
+                className="w-full py-3 rounded-2xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-extrabold text-xs flex items-center justify-center gap-2 border border-indigo-200 transition btn-kids-pop"
+              >
+                <Volume2 className="w-4 h-4" /> Uji Coba Suara Pelafalan Bahasa Indonesia (0.55x)
+              </button>
             </div>
 
             {/* Tombol Uji Coba Suara */}

@@ -9,7 +9,7 @@ export interface SpeechSettings {
 }
 
 const DEFAULT_SETTINGS: SpeechSettings = {
-  rate: 0.65, // Tempo santai & jelas untuk anak usia 4-6 tahun
+  rate: 0.55, // Default tempo 0.55x (Sangat Pelan & Jelas untuk anak TK)
   pitch: 1.1,
   volume: 1.0,
 };
@@ -251,28 +251,28 @@ export function speakText(
 }
 
 /**
- * Melafalkan Huruf Alfabet (A, B, C...) dengan artikulasi lambat & tegas
+ * Melafalkan Huruf Alfabet (A, B, C...) dengan artikulasi lambat & tegas (0.55x)
  */
 export function speakLetter(letter: string, soundCue?: string, onEnd?: () => void) {
   const cleanLetter = letter.trim().toUpperCase();
   const textToSpeak = PHONETIC_MAP[cleanLetter] || cleanLetter;
-  const rate = Math.min(getSavedSpeechRate(), 0.65);
+  const rate = 0.55;
   return speakText(textToSpeak, { rate, pitch: 1.15 }, onEnd);
 }
 
 /**
- * Melafalkan Suku Kata (ba, bi, bu, ca, ci, dll) dengan tempo pelan
+ * Melafalkan Suku Kata (ba, bi, bu, ca, ci, dll) dengan tempo pelan (0.55x)
  */
 export function speakSyllable(syllable: string, onEnd?: () => void) {
-  const rate = Math.min(getSavedSpeechRate(), 0.65);
+  const rate = 0.55;
   return speakText(syllable.toLowerCase(), { rate, pitch: 1.1 }, onEnd);
 }
 
 /**
- * Melafalkan Kata Utuh (Baju, Bola, Sepatu) secara jernih
+ * Melafalkan Kata Utuh (Baju, Bola, Sepatu) secara jernih (0.55x)
  */
 export function speakWord(word: string, onEnd?: () => void) {
-  const rate = Math.min(getSavedSpeechRate(), 0.7);
+  const rate = 0.55;
   return speakText(word.toLowerCase(), { rate, pitch: 1.1 }, onEnd);
 }
 
