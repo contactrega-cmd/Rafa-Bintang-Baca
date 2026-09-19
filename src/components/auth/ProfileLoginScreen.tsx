@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   getAllProfiles,
   createProfile,
@@ -29,13 +29,27 @@ interface ProfileLoginScreenProps {
 }
 
 export default function ProfileLoginScreen({ onSelectProfile }: ProfileLoginScreenProps) {
-  const [profiles, setProfiles] = useState<UserProgress[]>(getAllProfiles());
+  const [profiles, setProfiles] = useState<UserProgress[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [newChildName, setNewChildName] = useState('');
   const [selectedAnimalId, setSelectedAnimalId] = useState(ANIMAL_CHARACTERS[0].id);
 
+  useEffect(() => {
+    const list = getAllProfiles();
+    setProfiles(list);
+    setIsLoaded(true);
+    if (list.length === 0) {
+      setIsCreating(true);
+    }
+  }, []);
+
   const refreshProfilesList = () => {
-    setProfiles(getAllProfiles());
+    const list = getAllProfiles();
+    setProfiles(list);
+    if (list.length === 0) {
+      setIsCreating(true);
+    }
   };
 
   const handleChooseProfile = (profile: UserProgress) => {
@@ -117,103 +131,130 @@ export default function ProfileLoginScreen({ onSelectProfile }: ProfileLoginScre
         {/* JIKA SEDANG DALAM MODE PILIH PROFIL */}
         {!isCreating ? (
           <div>
-            <div className="flex items-center justify-between mb-5">
-              <h2 className="text-lg sm:text-xl font-black text-slate-800 flex items-center gap-2">
-                <Smile className="w-5 h-5 text-orange-500" />
-                Siapa yang Mau Belajar Hari Ini?
-              </h2>
-
-              <button
-                onClick={() => {
-                  playClickSound();
-                  setIsCreating(true);
-                }}
-                className="px-4 py-2 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs sm:text-sm shadow-md shadow-orange-200 flex items-center gap-1.5 transition btn-kids-pop"
-              >
-                <Plus className="w-4 h-4" /> Tambah Akun
-              </button>
-            </div>
-
-            {/* Grid Daftar Profil Anak */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-              {profiles.map((profile) => (
-                <div
-                  key={profile.id}
-                  onClick={() => handleChooseProfile(profile)}
-                  className="rounded-3xl p-5 bg-white border-2 border-slate-200 hover:border-orange-400 shadow-sm hover:shadow-md transition cursor-pointer flex flex-col items-center text-center btn-kids-pop relative group"
+            {profiles.length === 0 ? (
+              /* Tampilan Jika Belum Ada Akun */
+              <div className="py-8 flex flex-col items-center text-center">
+                <div className="w-16 h-16 rounded-3xl bg-amber-100 text-amber-600 flex items-center justify-center mb-3 text-3xl shadow-inner">
+                  🌱
+                </div>
+                <h2 className="text-xl font-black text-slate-800 mb-1">
+                  Belum Ada Akun Terdaftar
+                </h2>
+                <p className="text-slate-500 text-sm max-w-sm mb-6">
+                  Yuk buat akun anak pertama untuk memulai petualangan belajar membaca dari 0 bintang!
+                </p>
+                <button
+                  onClick={() => {
+                    playClickSound();
+                    setIsCreating(true);
+                  }}
+                  className="px-6 py-3.5 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-sm shadow-md shadow-orange-200 flex items-center gap-2 transition btn-kids-pop"
                 >
-                  {/* Tombol Hapus Profil (kecil di pojok) */}
-                  {profiles.length > 1 && (
-                    <button
-                      onClick={(e) => handleDeleteProfile(profile.id, profile.childName, e)}
-                      title="Hapus profil ini"
-                      className="absolute top-3 right-3 p-1.5 rounded-full bg-slate-100 hover:bg-rose-100 text-slate-400 hover:text-rose-600 opacity-0 group-hover:opacity-100 transition"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
-                  )}
+                  <Plus className="w-5 h-5" /> Buat Akun Pertama
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center justify-between mb-5">
+                  <h2 className="text-lg sm:text-xl font-black text-slate-800 flex items-center gap-2">
+                    <Smile className="w-5 h-5 text-orange-500" />
+                    Siapa yang Mau Belajar Hari Ini?
+                  </h2>
 
-                  {/* Avatar Hewan Besar */}
-                  <div className="w-20 h-20 rounded-full bg-amber-50 border-2 border-amber-200 flex items-center justify-center text-4xl mb-3 shadow-inner group-hover:scale-105 transition">
-                    {profile.avatar}
-                  </div>
-
-                  {/* Nama Anak */}
-                  <h3 className="text-xl font-black text-slate-800 mb-0.5">
-                    {profile.childName}
-                  </h3>
-
-                  {/* Label Karakter Hewan */}
-                  <span className="text-xs font-semibold text-slate-500 mb-3">
-                    {profile.animalLabel || 'Sahabat Pintar'}
-                  </span>
-
-                  {/* Badge Bintang */}
-                  <div className="mt-auto inline-flex items-center gap-1.5 bg-yellow-400 text-slate-900 px-3.5 py-1 rounded-full text-xs font-black shadow-xs">
-                    <Star className="w-3.5 h-3.5 fill-slate-900" />
-                    <span>{profile.stars} Bintang</span>
-                  </div>
-
-                  {/* Tombol Masuk */}
                   <button
-                    onClick={() => handleChooseProfile(profile)}
-                    className="mt-4 w-full py-2.5 rounded-2xl bg-orange-50 hover:bg-orange-100 text-orange-700 font-extrabold text-xs flex items-center justify-center gap-1.5 transition"
+                    onClick={() => {
+                      playClickSound();
+                      setIsCreating(true);
+                    }}
+                    className="px-4 py-2 rounded-2xl bg-orange-500 hover:bg-orange-600 text-white font-extrabold text-xs sm:text-sm shadow-md shadow-orange-200 flex items-center gap-1.5 transition btn-kids-pop"
                   >
-                    <span>Pilih Akun Ini</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
+                    <Plus className="w-4 h-4" /> Tambah Akun
                   </button>
                 </div>
-              ))}
 
-              {/* Kartu Tombol Tambah Akun Baru */}
-              <div
-                onClick={() => {
-                  playClickSound();
-                  setIsCreating(true);
-                }}
-                className="rounded-3xl p-6 border-2 border-dashed border-slate-300 hover:border-orange-400 bg-slate-50/50 hover:bg-orange-50/40 transition cursor-pointer flex flex-col items-center justify-center min-h-[220px] text-center btn-kids-pop"
-              >
-                <div className="w-14 h-14 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center mb-2">
-                  <Plus className="w-7 h-7" />
+                {/* Grid Daftar Profil Anak */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {profiles.map((profile) => (
+                    <div
+                      key={profile.id}
+                      onClick={() => handleChooseProfile(profile)}
+                      className="rounded-3xl p-5 bg-white border-2 border-slate-200 hover:border-orange-400 shadow-sm hover:shadow-md transition cursor-pointer flex flex-col items-center text-center btn-kids-pop relative group"
+                    >
+                      {/* Tombol Hapus Profil (Selalu aktif dan bisa menghapus profil apa pun) */}
+                      <button
+                        type="button"
+                        onClick={(e) => handleDeleteProfile(profile.id, profile.childName, e)}
+                        title={`Hapus akun "${profile.childName}"`}
+                        className="absolute top-3 right-3 p-1.5 rounded-full bg-slate-100 hover:bg-rose-100 text-slate-400 hover:text-rose-600 transition shadow-xs z-10"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+
+                      {/* Avatar Hewan Besar */}
+                      <div className="w-20 h-20 rounded-full bg-amber-50 border-2 border-amber-200 flex items-center justify-center text-4xl mb-3 shadow-inner group-hover:scale-105 transition">
+                        {profile.avatar}
+                      </div>
+
+                      {/* Nama Anak */}
+                      <h3 className="text-xl font-black text-slate-800 mb-0.5">
+                        {profile.childName}
+                      </h3>
+
+                      {/* Label Karakter Hewan */}
+                      <span className="text-xs font-semibold text-slate-500 mb-3">
+                        {profile.animalLabel || 'Sahabat Pintar'}
+                      </span>
+
+                      {/* Badge Bintang */}
+                      <div className="mt-auto inline-flex items-center gap-1.5 bg-yellow-400 text-slate-900 px-3.5 py-1 rounded-full text-xs font-black shadow-xs">
+                        <Star className="w-3.5 h-3.5 fill-slate-900" />
+                        <span>{profile.stars} Bintang</span>
+                      </div>
+
+                      {/* Tombol Masuk */}
+                      <button
+                        onClick={() => handleChooseProfile(profile)}
+                        className="mt-4 w-full py-2.5 rounded-2xl bg-orange-50 hover:bg-orange-100 text-orange-700 font-extrabold text-xs flex items-center justify-center gap-1.5 transition"
+                      >
+                        <span>Pilih Akun Ini</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  ))}
+
+                  {/* Kartu Tombol Tambah Akun Baru */}
+                  <div
+                    onClick={() => {
+                      playClickSound();
+                      setIsCreating(true);
+                    }}
+                    className="rounded-3xl p-6 border-2 border-dashed border-slate-300 hover:border-orange-400 bg-slate-50/50 hover:bg-orange-50/40 transition cursor-pointer flex flex-col items-center justify-center min-h-[220px] text-center btn-kids-pop"
+                  >
+                    <div className="w-14 h-14 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center mb-2">
+                      <Plus className="w-7 h-7" />
+                    </div>
+                    <span className="font-extrabold text-slate-700 text-sm">
+                      Buat Akun Baru
+                    </span>
+                    <span className="text-xs text-slate-400 mt-1">
+                      Tambah nama anak & pilih karakter hewan
+                    </span>
+                  </div>
                 </div>
-                <span className="font-extrabold text-slate-700 text-sm">
-                  Buat Akun Baru
-                </span>
-                <span className="text-xs text-slate-400 mt-1">
-                  Tambah nama anak & pilih karakter hewan
-                </span>
-              </div>
-            </div>
+              </>
+            )}
           </div>
         ) : (
           /* JIKA DALAM FORM PEMBUATAN AKUN BARU */
           <form onSubmit={handleCreateProfileSubmit} className="text-left space-y-6 max-w-xl mx-auto">
             <div className="text-center mb-6">
-              <h2 className="text-2xl font-black text-slate-800">
-                Buat Akun Anak Baru 🎨
+              <h2 className="text-2xl sm:text-3xl font-black text-slate-800">
+                {profiles.length === 0 ? 'Buat Akun Anak Pertama Kamu! 🎨' : 'Buat Akun Anak Baru 🎨'}
               </h2>
-              <p className="text-slate-500 text-xs sm:text-sm mt-1">
-                Tulis nama anak dan pilih karakter hewan yang paling cocok!
+              <p className="text-slate-500 text-xs sm:text-sm mt-1 max-w-md mx-auto">
+                {profiles.length === 0
+                  ? 'Mulai petualangan dari langkah pertama! Tulis nama anak dan pilih karakter hewan kesukaannya.'
+                  : 'Tulis nama anak dan pilih karakter hewan yang paling cocok!'}
               </p>
             </div>
 
@@ -278,23 +319,27 @@ export default function ProfileLoginScreen({ onSelectProfile }: ProfileLoginScre
 
             {/* Tombol Aksi Form */}
             <div className="flex gap-3 pt-4 border-t border-slate-100">
-              <button
-                type="button"
-                onClick={() => {
-                  playClickSound();
-                  setIsCreating(false);
-                }}
-                className="w-1/3 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-sm transition"
-              >
-                Batal
-              </button>
+              {profiles.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    playClickSound();
+                    setIsCreating(false);
+                  }}
+                  className="w-1/3 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-sm transition"
+                >
+                  Batal
+                </button>
+              )}
 
               <button
                 type="submit"
                 disabled={!newChildName.trim()}
-                className="w-2/3 py-3.5 rounded-2xl bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-extrabold text-base shadow-lg shadow-orange-200 flex items-center justify-center gap-2 transition btn-kids-pop"
+                className={`${
+                  profiles.length > 0 ? 'w-2/3' : 'w-full'
+                } py-3.5 rounded-2xl bg-orange-500 hover:bg-orange-600 disabled:opacity-50 text-white font-extrabold text-base shadow-lg shadow-orange-200 flex items-center justify-center gap-2 transition btn-kids-pop`}
               >
-                <span>Mulai Belajar! 🎉</span>
+                <span>{profiles.length === 0 ? 'Mulai Belajar Membaca! 🚀' : 'Mulai Belajar! 🎉'}</span>
               </button>
             </div>
           </form>

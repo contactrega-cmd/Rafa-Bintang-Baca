@@ -55,7 +55,7 @@ export default function ParentDashboard({ onProgressUpdate }: ParentDashboardPro
     playCorrectSound();
     const updated: UserProgress = {
       ...progress,
-      childName: editingName.trim() || 'Adik Pintar',
+      childName: editingName.trim() || 'Rafa',
       avatar: selectedAvatar,
       speechRate: speechRate,
       fontFamily: selectedFont,

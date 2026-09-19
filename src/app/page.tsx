@@ -291,7 +291,7 @@ export default function Home() {
           <div className="flex items-center gap-2">
             <Volume2 className="w-4 h-4 text-orange-600 flex-shrink-0" />
             <span>
-              💡 <strong>Halo {progress?.childName || 'Adik Pintar'}!</strong> Sentuh huruf atau suku kata untuk mendengar suaranya.
+              💡 <strong>Halo {progress?.childName || 'Sobat Cilik'}!</strong> Sentuh huruf atau suku kata untuk mendengar suaranya.
             </span>
           </div>
           <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">

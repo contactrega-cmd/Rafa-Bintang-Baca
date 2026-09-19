@@ -79,27 +79,18 @@ export const FONT_OPTIONS = [
 ];
 
 export const INITIAL_DEFAULT_PROFILE: UserProgress = {
-  id: 'profile_rafa_default',
+  id: 'profile_default',
   childName: 'Rafa',
   avatar: '🦁',
   animalLabel: 'Singa Berani',
-  stars: 10,
-  learnedLetters: ['A', 'B', 'C', 'D', 'E', 'I', 'U', 'O'],
-  learnedSyllables: ['ba', 'bi', 'bu', 'be', 'bo', 'ca', 'ci'],
-  learnedWords: ['baju', 'bola', 'kuda', 'meja'],
-  unlockedStickerIds: ['stk_1', 'stk_2', 'stk_3'],
-  quizHistory: [
-    {
-      id: 'init-1',
-      date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short' }),
-      gameType: 'Tebak Gambar',
-      score: 3,
-      totalQuestions: 3,
-      accuracy: 100,
-    },
-  ],
+  stars: 0,
+  learnedLetters: [],
+  learnedSyllables: [],
+  learnedWords: [],
+  unlockedStickerIds: [],
+  quizHistory: [],
   speechRate: 0.65,
-  dailyPracticeMinutes: 10,
+  dailyPracticeMinutes: 0,
   fontFamily: 'lexend',
   createdAt: new Date().toISOString(),
 };
@@ -123,53 +114,42 @@ export function syncUnlockedStickers(current: UserProgress): UserProgress {
  * Mengambil semua profil anak yang tersimpan
  */
 export function getAllProfiles(): UserProgress[] {
-  if (typeof window === 'undefined') return [INITIAL_DEFAULT_PROFILE];
+  if (typeof window === 'undefined') return [];
 
   try {
+    // Hapus legacy storage lama jika ada agar tidak membuat profil dummy
+    if (localStorage.getItem(LEGACY_STORAGE_KEY)) {
+      localStorage.removeItem(LEGACY_STORAGE_KEY);
+    }
+
     const raw = localStorage.getItem(PROFILES_KEY);
-    if (raw) {
+    if (raw !== null) {
       const parsed: UserProgress[] = JSON.parse(raw);
-      if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed.map((p) => syncUnlockedStickers(p));
+      if (Array.isArray(parsed)) {
+        // Otomatis hilangkan akun dummy 'Adik Pintar' atau id 'profile_migrated'
+        const filtered = parsed.filter(
+          (p) =>
+            p.childName.trim().toLowerCase() !== 'adik pintar' &&
+            p.id !== 'profile_migrated'
+        );
+
+        if (filtered.length !== parsed.length) {
+          localStorage.setItem(PROFILES_KEY, JSON.stringify(filtered));
+          const activeId = localStorage.getItem(ACTIVE_PROFILE_KEY);
+          if (activeId && !filtered.some((p) => p.id === activeId)) {
+            localStorage.removeItem(ACTIVE_PROFILE_KEY);
+          }
+        }
+
+        return filtered.map((p) => syncUnlockedStickers(p));
       }
     }
 
-    // Migrasi otomatis dari data single-profile lama jika ada
-    const legacyRaw = localStorage.getItem(LEGACY_STORAGE_KEY);
-    let initialProfiles: UserProgress[] = [];
-
-    if (legacyRaw) {
-      try {
-        const legacy = JSON.parse(legacyRaw);
-        const migrated: UserProgress = {
-          ...INITIAL_DEFAULT_PROFILE,
-          id: 'profile_migrated',
-          childName: legacy.childName || 'Rafa',
-          avatar: legacy.avatar || '🦁',
-          animalLabel: 'Singa Berani',
-          stars: typeof legacy.stars === 'number' ? legacy.stars : 10,
-          learnedLetters: legacy.learnedLetters || INITIAL_DEFAULT_PROFILE.learnedLetters,
-          learnedSyllables: legacy.learnedSyllables || INITIAL_DEFAULT_PROFILE.learnedSyllables,
-          learnedWords: legacy.learnedWords || INITIAL_DEFAULT_PROFILE.learnedWords,
-          unlockedStickerIds: legacy.unlockedStickerIds || ['stk_1', 'stk_2', 'stk_3'],
-          quizHistory: legacy.quizHistory || INITIAL_DEFAULT_PROFILE.quizHistory,
-          speechRate: legacy.speechRate || 0.65,
-          fontFamily: legacy.fontFamily || 'lexend',
-          dailyPracticeMinutes: legacy.dailyPracticeMinutes || 10,
-        };
-        initialProfiles = [syncUnlockedStickers(migrated)];
-      } catch {
-        initialProfiles = [syncUnlockedStickers(INITIAL_DEFAULT_PROFILE)];
-      }
-    } else {
-      initialProfiles = [syncUnlockedStickers(INITIAL_DEFAULT_PROFILE)];
-    }
-
-    localStorage.setItem(PROFILES_KEY, JSON.stringify(initialProfiles));
-    return initialProfiles;
+    // Jika belum pernah ada akun yang dibuat, mulai dari daftar kosong []
+    return [];
   } catch (e) {
     console.error('Gagal membaca profil:', e);
-    return [INITIAL_DEFAULT_PROFILE];
+    return [];
   }
 }
 
@@ -216,17 +196,17 @@ export function createProfile(name: string, animalId: string): UserProgress {
 
   const newProfile: UserProgress = {
     id: `profile_${Date.now()}_${Math.random().toString(36).substr(2, 5)}`,
-    childName: name.trim() || 'Adik Ceria',
+    childName: name.trim() || 'Rafa',
     avatar: selectedAnimal.emoji,
     animalLabel: selectedAnimal.name,
-    stars: 3, // Bintang sambutan awal
-    learnedLetters: ['A', 'I', 'U'],
-    learnedSyllables: ['ba', 'bi', 'bu'],
-    learnedWords: ['baju', 'bola'],
-    unlockedStickerIds: ['stk_1'],
+    stars: 0, // Murni mulai dari 0 bintang
+    learnedLetters: [],
+    learnedSyllables: [],
+    learnedWords: [],
+    unlockedStickerIds: [],
     quizHistory: [],
     speechRate: 0.65,
-    dailyPracticeMinutes: 5,
+    dailyPracticeMinutes: 0,
     fontFamily: 'lexend',
     createdAt: new Date().toISOString(),
   };
