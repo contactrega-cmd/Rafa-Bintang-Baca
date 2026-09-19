@@ -32,7 +32,7 @@ export default function SentenceModule({ onProgressUpdate }: SentenceModuleProps
     playClickSound();
     setActiveSpeakingId(item.id);
 
-    speakText(item.sentence, { rate: 0.75 }, () => {
+    speakText(item.sentence, { rate: 0.55 }, () => {
       setActiveSpeakingId(null);
       setHighlightedWordIdx(null);
     });

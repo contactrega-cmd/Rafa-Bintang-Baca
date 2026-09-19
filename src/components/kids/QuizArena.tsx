@@ -64,7 +64,7 @@ export default function QuizArena({ onProgressUpdate }: QuizArenaProps) {
 
       // Otomatis bunyikan instruksi audio
       setTimeout(() => {
-        speakText(`Cari kata: ${target.word}`, { rate: 0.75 });
+        speakText(`Cari kata: ${target.word}`, { rate: 0.55 });
       }, 300);
     }
   };
@@ -370,7 +370,7 @@ export default function QuizArena({ onProgressUpdate }: QuizArenaProps) {
                     <button
                       onClick={() => {
                         playClickSound();
-                        speakText(`Cari kata: ${currentWord.word}`, { rate: 0.75 });
+                        speakText(`Cari kata: ${currentWord.word}`, { rate: 0.55 });
                       }}
                       className="p-6 rounded-full bg-rose-500 text-white shadow-xl shadow-rose-200 hover:bg-rose-600 transition btn-kids-pop speaking-pulse"
                       title="Klik untuk mendengarkan suara lagi"

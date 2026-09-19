@@ -14,40 +14,72 @@ const DEFAULT_SETTINGS: SpeechSettings = {
   volume: 1.0,
 };
 
-// Pemetaan fonik huruf Indonesia agar terdengar tepat dan tegas
-const PHONETIC_MAP: Record<string, string> = {
-  A: 'A',
-  B: 'Bé',
-  C: 'Cé',
-  D: 'Dé',
-  E: 'É',
-  F: 'Ef',
-  G: 'Gé',
-  H: 'Ha',
-  I: 'I',
-  J: 'Jé',
-  K: 'Ka',
-  L: 'El',
-  M: 'Em',
-  N: 'En',
-  O: 'O',
-  P: 'Pé',
-  Q: 'Kiu',
-  R: 'Er',
-  S: 'Es',
-  T: 'Té',
-  U: 'U',
-  V: 'Fé',
-  W: 'Wé',
-  X: 'Eks',
-  Y: 'Yé',
-  Z: 'Zet',
+// Pemetaan fonik huruf Indonesia agar terdengar tepat, tegas, dan langsung (tanpa 'huruf besar')
+export const PHONETIC_MAP: Record<string, string> = {
+  A: 'a',
+  B: 'bé',
+  C: 'cé',
+  D: 'dé',
+  E: 'e',
+  F: 'ef',
+  G: 'gé',
+  H: 'ha',
+  I: 'i',
+  J: 'je',
+  K: 'ka',
+  L: 'el',
+  M: 'em',
+  N: 'en',
+  O: 'o',
+  P: 'pé',
+  Q: 'ki',
+  R: 'er',
+  S: 'es',
+  T: 'té',
+  U: 'u',
+  V: 've',
+  W: 'we',
+  X: 'eks',
+  Y: 'ye',
+  Z: 'zet',
 };
 
 // Global active audio & sequence controller
 let currentAudio: HTMLAudioElement | null = null;
 let currentSequenceId = 0;
+let currentSpeechId = 0;
 let activeUtterance: SpeechSynthesisUtterance | null = null;
+
+/**
+ * Mendapatkan pelafalan fonik bersih untuk huruf alfabet (selalu lowercase agar TTS tidak mengeja 'huruf besar')
+ */
+export function getLetterPhonetic(letter: string): string {
+  const clean = letter.trim().toUpperCase();
+  return PHONETIC_MAP[clean] || clean.toLowerCase();
+}
+
+/**
+ * Normalisasi teks untuk memastikan TTS tidak mengucapkan "huruf besar"
+ * serta membersihkan format ejaan huruf tunggal atau prefix huruf
+ */
+export function normalizeTextForSpeech(text: string): string {
+  const cleaned = text.trim();
+  if (!cleaned) return '';
+
+  // Jika berupa satu huruf tunggal (misal 'A', 'B', 'c')
+  if (cleaned.length === 1) {
+    return getLetterPhonetic(cleaned);
+  }
+
+  // Jika format seperti "A... Apel" atau "B - Bola" atau "A: Apel"
+  const prefixMatch = cleaned.match(/^([a-zA-Z])(\s*(?:\.{2,}|-|:)\s*)(.*)$/);
+  if (prefixMatch) {
+    const [, letter, separator, rest] = prefixMatch;
+    return `${getLetterPhonetic(letter)}${separator}${rest.toLowerCase()}`;
+  }
+
+  return cleaned.toLowerCase();
+}
 
 /**
  * Mengambil kecepatan bicara yang tersimpan di profil aktif
@@ -78,12 +110,16 @@ export function isSpeechSupported(): boolean {
  */
 export function stopSpeech() {
   currentSequenceId++; // Batalkan sekuens yang sedang menunggu jeda
+  currentSpeechId++;   // Batalkan eksekusi suara aktif sebelumnya
 
   // Hentikan HTML5 Audio
   if (currentAudio) {
     try {
+      currentAudio.onended = null;
+      currentAudio.onerror = null;
       currentAudio.pause();
       currentAudio.currentTime = 0;
+      currentAudio.src = '';
     } catch (e) {
       // ignore
     }
@@ -93,6 +129,9 @@ export function stopSpeech() {
   // Hentikan Web Speech API
   if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
     try {
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
       window.speechSynthesis.cancel();
     } catch (e) {
       // ignore
@@ -115,10 +154,11 @@ function speakWithWebSpeech(
   }
 
   try {
-    // Unfreeze queue di Chrome jika sempat paused
+    // Unpause jika sempat macet dan bersihkan antrean sebelumnya agar tidak dobel
     if (window.speechSynthesis.paused) {
       window.speechSynthesis.resume();
     }
+    window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.rate = settings.rate;
@@ -178,6 +218,7 @@ function speakWithWebSpeech(
 
 /**
  * Membunyikan teks apapun dengan suara bahasa Indonesia bertempo ramah anak
+ * Menjamin suara hanya diputar TEPAT 1 KALI (tanpa pengulangan / double trigger)
  */
 export function speakText(
   text: string,
@@ -189,7 +230,9 @@ export function speakText(
     return false;
   }
 
+  // Hentikan suara yang sedang aktif dan tandai ID invocation baru
   stopSpeech();
+  const speechId = currentSpeechId;
 
   const currentSavedRate = getSavedSpeechRate();
   const effectiveRate = customSettings?.rate ?? currentSavedRate;
@@ -199,26 +242,48 @@ export function speakText(
     ...customSettings,
   };
 
-  const cleanText = text.trim();
+  const cleanText = normalizeTextForSpeech(text);
   if (!cleanText) {
     if (onEnd) onEnd();
     return true;
   }
 
-  // Gunakan Google TTS Bahasa Indonesia sebagai engine utama
-  const encodedText = encodeURIComponent(cleanText);
-  const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodedText}&tl=id&client=tw-ob`;
+  // Penjaga ketat: Cegah eksekusi audio dan fallback berjalan bersamaan atau dobel
+  let isExecuted = false;
 
-  let finished = false;
-  const finishOnce = () => {
-    if (!finished) {
-      finished = true;
+  const handleComplete = () => {
+    if (speechId !== currentSpeechId) return;
+    if (isExecuted) return;
+    isExecuted = true;
+    currentAudio = null;
+    if (onEnd) onEnd();
+  };
+
+  const handleFallback = () => {
+    if (speechId !== currentSpeechId) return;
+    if (isExecuted) return;
+    isExecuted = true;
+
+    // Bersihkan Audio Element sebelum beralih ke Web Speech API
+    if (currentAudio) {
+      try {
+        currentAudio.onended = null;
+        currentAudio.onerror = null;
+        currentAudio.pause();
+        currentAudio.src = '';
+      } catch (e) {
+        // ignore
+      }
       currentAudio = null;
-      if (onEnd) onEnd();
     }
+
+    speakWithWebSpeech(cleanText, settings, onEnd);
   };
 
   try {
+    const encodedText = encodeURIComponent(cleanText);
+    const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodedText}&tl=id&client=tw-ob`;
+
     const audio = new Audio(ttsUrl);
     currentAudio = audio;
 
@@ -226,36 +291,36 @@ export function speakText(
     audio.playbackRate = Math.max(0.65, Math.min(1.2, settings.rate * 1.15));
 
     audio.onended = () => {
-      finishOnce();
+      handleComplete();
     };
 
     audio.onerror = () => {
-      // Jika offline atau gagal memuat URL Google TTS, fallback ke Web Speech API bawaan perangkat
-      speakWithWebSpeech(cleanText, settings, onEnd);
+      // Jika Google TTS gagal/offline/dibatasi browser, gunakan Web Speech API tepat satu kali
+      handleFallback();
     };
 
     const playPromise = audio.play();
     if (playPromise !== undefined) {
       playPromise.catch((err) => {
-        console.warn('Autoplay audio dibatasi browser, mencoba fallback Web Speech:', err);
-        speakWithWebSpeech(cleanText, settings, onEnd);
+        // Autoplay dibatasi atau request diblokir, gunakan Web Speech API tepat satu kali
+        handleFallback();
       });
     }
 
     return true;
   } catch (e) {
     console.warn('HTML5 Audio gagal, beralih ke Web Speech API:', e);
-    speakWithWebSpeech(cleanText, settings, onEnd);
+    handleFallback();
     return true;
   }
 }
 
 /**
  * Melafalkan Huruf Alfabet (A, B, C...) dengan artikulasi lambat & tegas (0.55x)
+ * Langsung menyebutkan nama huruf tanpa awalan "huruf besar"
  */
 export function speakLetter(letter: string, soundCue?: string, onEnd?: () => void) {
-  const cleanLetter = letter.trim().toUpperCase();
-  const textToSpeak = PHONETIC_MAP[cleanLetter] || cleanLetter;
+  const textToSpeak = getLetterPhonetic(letter);
   const rate = 0.55;
   return speakText(textToSpeak, { rate, pitch: 1.15 }, onEnd);
 }
