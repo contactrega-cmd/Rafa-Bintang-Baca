@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { ALPHABET_DATA, LetterItem } from '@/data/curriculum';
-import { speakLetter, speakWord, speakText, getLetterPhonetic } from '@/lib/speech';
+import { speakLetter, speakWord, speakText } from '@/lib/speech';
 import { playClickSound, playCorrectSound } from '@/lib/soundEffects';
 import { markLetterLearned, getProgress, UserProgress } from '@/lib/storage';
 import { Volume2, Star, CheckCircle, Sparkles, X } from 'lucide-react';
@@ -37,8 +37,7 @@ export default function AlphabetModule({ onProgressUpdate }: AlphabetModuleProps
   const handlePlayWordSound = (item: LetterItem) => {
     playClickSound();
     setIsSpeaking(item.word);
-    const letterSpoken = getLetterPhonetic(item.letter);
-    speakText(`${letterSpoken}... ${item.word}`, { rate: 0.55 }, () => {
+    speakWord(item.word, () => {
       setIsSpeaking(null);
     });
   };
