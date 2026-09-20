@@ -233,8 +233,6 @@ export default function Home() {
             <ActivityPortal
               progress={progress}
               onSelectActivity={(tab) => handleTabChange(tab)}
-              onOpenParentMode={() => handleModeChange('parent')}
-              onSwitchAccount={handleSwitchAccount}
             />
           )
         ) : (

@@ -7,12 +7,8 @@ import {
   Star,
   Trophy,
   BookOpen,
-  Sparkles,
   ArrowRight,
-  ShieldCheck,
-  Users,
   CheckCircle2,
-  Smile,
   Compass,
 } from 'lucide-react';
 
@@ -21,8 +17,6 @@ export type ActivityTab = 'alphabet' | 'syllables' | 'words' | 'sentences' | 'qu
 interface ActivityPortalProps {
   progress: UserProgress;
   onSelectActivity: (tab: ActivityTab) => void;
-  onOpenParentMode: () => void;
-  onSwitchAccount: () => void;
 }
 
 interface ActivityCardItem {
@@ -45,8 +39,6 @@ interface ActivityCardItem {
 export default function ActivityPortal({
   progress,
   onSelectActivity,
-  onOpenParentMode,
-  onSwitchAccount,
 }: ActivityPortalProps) {
   const lettersLearned = progress.learnedLetters?.length || 0;
   const syllablesLearned = progress.learnedSyllables?.length || 0;
@@ -336,55 +328,6 @@ export default function ActivityPortal({
               </div>
             );
           })}
-        </div>
-      </div>
-
-      {/* 3. PINTASAN BAWAH: MODE ORANG TUA & GANTI AKUN */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-        {/* Kartu Pantau Orang Tua */}
-        <div
-          onClick={onOpenParentMode}
-          className="bg-white/90 backdrop-blur-sm rounded-3xl border border-indigo-200 p-4 sm:p-5 shadow-sm hover:shadow-md transition cursor-pointer flex items-center justify-between gap-4 group"
-        >
-          <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center">
-              <ShieldCheck className="w-6 h-6" />
-            </div>
-            <div>
-              <h5 className="font-extrabold text-slate-800 text-sm sm:text-base group-hover:text-indigo-600 transition">
-                Dashboard & Laporan Orang Tua
-              </h5>
-              <p className="text-xs text-slate-500 font-medium">
-                Grafik kemajuan membaca, akurasi kuis, & evaluasi.
-              </p>
-            </div>
-          </div>
-          <button className="px-3 py-2 rounded-xl bg-indigo-50 group-hover:bg-indigo-600 group-hover:text-white text-indigo-700 font-extrabold text-xs transition flex-shrink-0">
-            Buka ➔
-          </button>
-        </div>
-
-        {/* Kartu Ganti Akun Anak */}
-        <div
-          onClick={onSwitchAccount}
-          className="bg-white/90 backdrop-blur-sm rounded-3xl border border-amber-200 p-4 sm:p-5 shadow-sm hover:shadow-md transition cursor-pointer flex items-center justify-between gap-4 group"
-        >
-          <div className="flex items-center gap-3.5">
-            <div className="w-12 h-12 rounded-2xl bg-amber-100 text-amber-700 flex items-center justify-center">
-              <Users className="w-6 h-6" />
-            </div>
-            <div>
-              <h5 className="font-extrabold text-slate-800 text-sm sm:text-base group-hover:text-amber-600 transition">
-                Ganti Profil / Akun Anak
-              </h5>
-              <p className="text-xs text-slate-500 font-medium">
-                Masuk dengan anak lain atau tambahkan adik/kakak.
-              </p>
-            </div>
-          </div>
-          <button className="px-3 py-2 rounded-xl bg-amber-50 group-hover:bg-amber-500 group-hover:text-white text-amber-700 font-extrabold text-xs transition flex-shrink-0">
-            Pilih ➔
-          </button>
         </div>
       </div>
     </div>
