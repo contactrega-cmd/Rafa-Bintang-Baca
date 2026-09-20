@@ -37,6 +37,7 @@ export interface SimpleSentence {
     syllables: string[];
   }[];
   meaningEmoji: string;
+  category?: 'keluarga' | 'hewan' | 'makanan' | 'aktivitas' | 'lingkungan';
 }
 
 export interface Sticker {
@@ -242,8 +243,9 @@ export const READING_WORDS: ReadingWord[] = [
   { id: 'w22', word: 'kelinci', syllables: ['ke', 'lin', 'ci'], emoji: '🐰', category: 'hewan', level: 2, phoneticHint: 'ke-lin-ci' },
 ];
 
-// 4. DATA KALIMAT SEDERHANA
+// 4. DATA KALIMAT SEDERHANA (30 Kalimat Latihan Membaca Anak TK)
 export const SIMPLE_SENTENCES: SimpleSentence[] = [
+  // --- Kategori: Keluarga & Rumah ---
   {
     id: 's1',
     sentence: 'ini buku budi',
@@ -253,6 +255,7 @@ export const SIMPLE_SENTENCES: SimpleSentence[] = [
       { word: 'budi', syllables: ['bu', 'di'] },
     ],
     meaningEmoji: '📖👦',
+    category: 'keluarga',
   },
   {
     id: 's2',
@@ -263,9 +266,56 @@ export const SIMPLE_SENTENCES: SimpleSentence[] = [
       { word: 'roti', syllables: ['ro', 'ti'] },
     ],
     meaningEmoji: '👩🍞',
+    category: 'keluarga',
   },
   {
     id: 's3',
+    sentence: 'ayah baca koran',
+    words: [
+      { word: 'ayah', syllables: ['a', 'yah'] },
+      { word: 'baca', syllables: ['ba', 'ca'] },
+      { word: 'koran', syllables: ['ko', 'ran'] },
+    ],
+    meaningEmoji: '👨📰',
+    category: 'keluarga',
+  },
+  {
+    id: 's4',
+    sentence: 'adik minum susu',
+    words: [
+      { word: 'adik', syllables: ['a', 'dik'] },
+      { word: 'minum', syllables: ['mi', 'num'] },
+      { word: 'susu', syllables: ['su', 'su'] },
+    ],
+    meaningEmoji: '👶🥛',
+    category: 'keluarga',
+  },
+  {
+    id: 's5',
+    sentence: 'kakak cuci baju',
+    words: [
+      { word: 'kakak', syllables: ['ka', 'kak'] },
+      { word: 'cuci', syllables: ['cu', 'ci'] },
+      { word: 'baju', syllables: ['ba', 'ju'] },
+    ],
+    meaningEmoji: '👧👕',
+    category: 'keluarga',
+  },
+  {
+    id: 's6',
+    sentence: 'kakek tanam bunga',
+    words: [
+      { word: 'kakek', syllables: ['ka', 'kek'] },
+      { word: 'tanam', syllables: ['ta', 'nam'] },
+      { word: 'bunga', syllables: ['bu', 'nga'] },
+    ],
+    meaningEmoji: '👴🌻',
+    category: 'keluarga',
+  },
+
+  // --- Kategori: Hewan Lucu ---
+  {
+    id: 's7',
     sentence: 'kuda lari cepat',
     words: [
       { word: 'kuda', syllables: ['ku', 'da'] },
@@ -273,9 +323,67 @@ export const SIMPLE_SENTENCES: SimpleSentence[] = [
       { word: 'cepat', syllables: ['ce', 'pat'] },
     ],
     meaningEmoji: '🐴💨',
+    category: 'hewan',
   },
   {
-    id: 's4',
+    id: 's8',
+    sentence: 'kucing suka ikan',
+    words: [
+      { word: 'kucing', syllables: ['ku', 'cing'] },
+      { word: 'suka', syllables: ['su', 'ka'] },
+      { word: 'ikan', syllables: ['i', 'kan'] },
+    ],
+    meaningEmoji: '🐱🐟',
+    category: 'hewan',
+  },
+  {
+    id: 's9',
+    sentence: 'sapi makan rumput',
+    words: [
+      { word: 'sapi', syllables: ['sa', 'pi'] },
+      { word: 'makan', syllables: ['ma', 'kan'] },
+      { word: 'rumput', syllables: ['rum', 'put'] },
+    ],
+    meaningEmoji: '🐮🌿',
+    category: 'hewan',
+  },
+  {
+    id: 's10',
+    sentence: 'bebek suka renang',
+    words: [
+      { word: 'bebek', syllables: ['be', 'bek'] },
+      { word: 'suka', syllables: ['su', 'ka'] },
+      { word: 'renang', syllables: ['re', 'nang'] },
+    ],
+    meaningEmoji: '🦆💦',
+    category: 'hewan',
+  },
+  {
+    id: 's11',
+    sentence: 'kelinci lompat riang',
+    words: [
+      { word: 'kelinci', syllables: ['ke', 'lin', 'ci'] },
+      { word: 'lompat', syllables: ['lom', 'pat'] },
+      { word: 'riang', syllables: ['ri', 'ang'] },
+    ],
+    meaningEmoji: '🐰🌸',
+    category: 'hewan',
+  },
+  {
+    id: 's12',
+    sentence: 'ikan hias berenang',
+    words: [
+      { word: 'ikan', syllables: ['i', 'kan'] },
+      { word: 'hias', syllables: ['hi', 'as'] },
+      { word: 'berenang', syllables: ['be', 're', 'nang'] },
+    ],
+    meaningEmoji: '🐠🌊',
+    category: 'hewan',
+  },
+
+  // --- Kategori: Makanan & Minuman ---
+  {
+    id: 's13',
     sentence: 'saya suka susu',
     words: [
       { word: 'saya', syllables: ['sa', 'ya'] },
@@ -283,9 +391,67 @@ export const SIMPLE_SENTENCES: SimpleSentence[] = [
       { word: 'susu', syllables: ['su', 'su'] },
     ],
     meaningEmoji: '🧒🥛',
+    category: 'makanan',
   },
   {
-    id: 's5',
+    id: 's14',
+    sentence: 'ani makan apel',
+    words: [
+      { word: 'ani', syllables: ['a', 'ni'] },
+      { word: 'makan', syllables: ['ma', 'kan'] },
+      { word: 'apel', syllables: ['a', 'pel'] },
+    ],
+    meaningEmoji: '👧🍎',
+    category: 'makanan',
+  },
+  {
+    id: 's15',
+    sentence: 'dini kupas pisang',
+    words: [
+      { word: 'dini', syllables: ['di', 'ni'] },
+      { word: 'kupas', syllables: ['ku', 'pas'] },
+      { word: 'pisang', syllables: ['pi', 'sang'] },
+    ],
+    meaningEmoji: '👧🍌',
+    category: 'makanan',
+  },
+  {
+    id: 's16',
+    sentence: 'budi minum madu',
+    words: [
+      { word: 'budi', syllables: ['bu', 'di'] },
+      { word: 'minum', syllables: ['mi', 'num'] },
+      { word: 'madu', syllables: ['ma', 'du'] },
+    ],
+    meaningEmoji: '👦🍯',
+    category: 'makanan',
+  },
+  {
+    id: 's17',
+    sentence: 'mama masak nasi',
+    words: [
+      { word: 'mama', syllables: ['ma', 'ma'] },
+      { word: 'masak', syllables: ['ma', 'sak'] },
+      { word: 'nasi', syllables: ['na', 'si'] },
+    ],
+    meaningEmoji: '👩🍚',
+    category: 'makanan',
+  },
+  {
+    id: 's18',
+    sentence: 'roti tawar manis',
+    words: [
+      { word: 'roti', syllables: ['ro', 'ti'] },
+      { word: 'tawar', syllables: ['ta', 'war'] },
+      { word: 'manis', syllables: ['ma', 'nis'] },
+    ],
+    meaningEmoji: '🍞🍯',
+    category: 'makanan',
+  },
+
+  // --- Kategori: Main & Beraktivitas ---
+  {
+    id: 's19',
     sentence: 'budi main bola',
     words: [
       { word: 'budi', syllables: ['bu', 'di'] },
@@ -293,6 +459,130 @@ export const SIMPLE_SENTENCES: SimpleSentence[] = [
       { word: 'bola', syllables: ['bo', 'la'] },
     ],
     meaningEmoji: '👦⚽',
+    category: 'aktivitas',
+  },
+  {
+    id: 's20',
+    sentence: 'rudi naik sepeda',
+    words: [
+      { word: 'rudi', syllables: ['ru', 'di'] },
+      { word: 'naik', syllables: ['na', 'ik'] },
+      { word: 'sepeda', syllables: ['se', 'pe', 'da'] },
+    ],
+    meaningEmoji: '👦🚲',
+    category: 'aktivitas',
+  },
+  {
+    id: 's21',
+    sentence: 'rani punya boneka',
+    words: [
+      { word: 'rani', syllables: ['ra', 'ni'] },
+      { word: 'punya', syllables: ['pu', 'nya'] },
+      { word: 'boneka', syllables: ['bo', 'ne', 'ka'] },
+    ],
+    meaningEmoji: '👧🧸',
+    category: 'aktivitas',
+  },
+  {
+    id: 's22',
+    sentence: 'doni tarik tali',
+    words: [
+      { word: 'doni', syllables: ['do', 'ni'] },
+      { word: 'tarik', syllables: ['ta', 'rik'] },
+      { word: 'tali', syllables: ['ta', 'li'] },
+    ],
+    meaningEmoji: '👦🪢',
+    category: 'aktivitas',
+  },
+  {
+    id: 's23',
+    sentence: 'kami suka baca',
+    words: [
+      { word: 'kami', syllables: ['ka', 'mi'] },
+      { word: 'suka', syllables: ['su', 'ka'] },
+      { word: 'baca', syllables: ['ba', 'ca'] },
+    ],
+    meaningEmoji: '🎒📚',
+    category: 'aktivitas',
+  },
+  {
+    id: 's24',
+    sentence: 'saya cuci tangan',
+    words: [
+      { word: 'saya', syllables: ['sa', 'ya'] },
+      { word: 'cuci', syllables: ['cu', 'ci'] },
+      { word: 'tangan', syllables: ['ta', 'ngan'] },
+    ],
+    meaningEmoji: '🧒🧼',
+    category: 'aktivitas',
+  },
+
+  // --- Kategori: Benda & Lingkungan Sekitar ---
+  {
+    id: 's25',
+    sentence: 'siti buka pintu',
+    words: [
+      { word: 'siti', syllables: ['si', 'ti'] },
+      { word: 'buka', syllables: ['bu', 'ka'] },
+      { word: 'pintu', syllables: ['pin', 'tu'] },
+    ],
+    meaningEmoji: '👧🚪',
+    category: 'lingkungan',
+  },
+  {
+    id: 's26',
+    sentence: 'bunga mekar wangi',
+    words: [
+      { word: 'bunga', syllables: ['bu', 'nga'] },
+      { word: 'mekar', syllables: ['me', 'kar'] },
+      { word: 'wangi', syllables: ['wa', 'ngi'] },
+    ],
+    meaningEmoji: '🌺✨',
+    category: 'lingkungan',
+  },
+  {
+    id: 's27',
+    sentence: 'sepatu baru budi',
+    words: [
+      { word: 'sepatu', syllables: ['se', 'pa', 'tu'] },
+      { word: 'baru', syllables: ['ba', 'ru'] },
+      { word: 'budi', syllables: ['bu', 'di'] },
+    ],
+    meaningEmoji: '👟⭐',
+    category: 'lingkungan',
+  },
+  {
+    id: 's28',
+    sentence: 'burung terbang tinggi',
+    words: [
+      { word: 'burung', syllables: ['bu', 'rung'] },
+      { word: 'terbang', syllables: ['ter', 'bang'] },
+      { word: 'tinggi', syllables: ['ting', 'gi'] },
+    ],
+    meaningEmoji: '🐦🌤️',
+    category: 'lingkungan',
+  },
+  {
+    id: 's29',
+    sentence: 'rumah kami bersih',
+    words: [
+      { word: 'rumah', syllables: ['ru', 'mah'] },
+      { word: 'kami', syllables: ['ka', 'mi'] },
+      { word: 'bersih', syllables: ['ber', 'sih'] },
+    ],
+    meaningEmoji: '🏡✨',
+    category: 'lingkungan',
+  },
+  {
+    id: 's30',
+    sentence: 'matahari terbit pagi',
+    words: [
+      { word: 'matahari', syllables: ['ma', 'ta', 'ha', 'ri'] },
+      { word: 'terbit', syllables: ['ter', 'bit'] },
+      { word: 'pagi', syllables: ['pa', 'gi'] },
+    ],
+    meaningEmoji: '☀️🌅',
+    category: 'lingkungan',
   },
 ];
 

@@ -45,6 +45,7 @@ export interface UserProgress {
   learnedLetters: string[];
   learnedSyllables: string[];
   learnedWords: string[];
+  learnedSentences?: string[];
   unlockedStickerIds: string[];
   quizHistory: QuizRecord[];
   speechRate: number;
@@ -58,25 +59,10 @@ const ACTIVE_PROFILE_KEY = 'rafa_bintang_baca_active_id_v2';
 const LEGACY_STORAGE_KEY = 'bintang_baca_progress_v1';
 
 export const FONT_OPTIONS = [
-  {
-    id: 'lexend',
-    name: 'Lexend (Sangat Jelas & Edukasi)',
-    description: 'Didesain khusus peneliti membaca untuk mengurangi stres visual & mempercepat pemahaman huruf anak.',
-    cssClass: "font-['Lexend',sans-serif]",
-  },
-  {
-    id: 'jakarta',
-    name: 'Plus Jakarta Sans (Modern & Bersih)',
-    description: 'Font sans-serif modern dengan bentuk kurva simetris, rapi, dan mudah dibedakan.',
-    cssClass: "font-['Plus_Jakarta_Sans',sans-serif]",
-  },
-  {
-    id: 'inter',
-    name: 'Inter (Standar Jernih)',
-    description: 'Bentuk huruf netral, tegas, dan kontras tinggi seperti di buku teks resmi.',
-    cssClass: "font-['Inter',sans-serif]",
-  },
-];
+  { id: 'jakarta', label: 'Plus Jakarta Sans', desc: 'Huruf tegak, proporsional, ramah anak TK (Standar)' },
+  { id: 'lexend', label: 'Lexend Deca', desc: 'Didesain khusus memudahkan anak membaca' },
+  { id: 'inter', label: 'Inter Clean', desc: 'Bersih, netral, sangat jelas' },
+] as const;
 
 export const INITIAL_DEFAULT_PROFILE: UserProgress = {
   id: 'profile_default',
@@ -87,6 +73,7 @@ export const INITIAL_DEFAULT_PROFILE: UserProgress = {
   learnedLetters: [],
   learnedSyllables: [],
   learnedWords: [],
+  learnedSentences: [],
   unlockedStickerIds: [],
   quizHistory: [],
   speechRate: 0.55, // Default tempo 0.55x (Sangat Pelan & Jelas)
@@ -208,6 +195,7 @@ export function createProfile(name: string, animalId: string): UserProgress {
     learnedLetters: [],
     learnedSyllables: [],
     learnedWords: [],
+    learnedSentences: [],
     unlockedStickerIds: [],
     quizHistory: [],
     speechRate: 0.55, // Default 0.55x
@@ -303,6 +291,18 @@ export function markWordLearned(word: string) {
   }
 }
 
+export function markSentenceLearned(sentenceId: string) {
+  const current = getProgress();
+  if (!current.learnedSentences) {
+    current.learnedSentences = [];
+  }
+  if (!current.learnedSentences.includes(sentenceId)) {
+    current.learnedSentences.push(sentenceId);
+    current.stars += 3;
+    saveProgress(current);
+  }
+}
+
 export function recordQuiz(record: Omit<QuizRecord, 'id'>) {
   const current = getProgress();
   const newRecord: QuizRecord = {
@@ -324,6 +324,7 @@ export function resetProgress() {
     active.learnedLetters = ['A', 'I', 'U'];
     active.learnedSyllables = ['ba', 'bi', 'bu'];
     active.learnedWords = ['baju'];
+    active.learnedSentences = [];
     active.unlockedStickerIds = ['stk_1'];
     active.quizHistory = [];
     saveProgress(active);

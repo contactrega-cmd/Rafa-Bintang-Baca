@@ -8,7 +8,7 @@ import {
   ANIMAL_CHARACTERS,
   UserProgress,
 } from '@/lib/storage';
-import { ALPHABET_DATA, SYLLABLE_GROUPS, READING_WORDS } from '@/data/curriculum';
+import { ALPHABET_DATA, SYLLABLE_GROUPS, READING_WORDS, SIMPLE_SENTENCES } from '@/data/curriculum';
 import { speakText, stopSpeech } from '@/lib/speech';
 import { playClickSound, playCorrectSound } from '@/lib/soundEffects';
 import {
@@ -48,6 +48,10 @@ export default function ParentDashboard({ onProgressUpdate }: ParentDashboardPro
   const totalWords = READING_WORDS.length;
   const learnedWordsCount = progress.learnedWords.length;
   const wordPercentage = Math.round((learnedWordsCount / totalWords) * 100);
+
+  const totalSentences = SIMPLE_SENTENCES.length;
+  const learnedSentencesCount = (progress.learnedSentences || []).length;
+  const sentencePercentage = Math.round((learnedSentencesCount / totalSentences) * 100);
 
   // Simpan Pengaturan
   const handleSaveSettings = () => {
@@ -126,8 +130,8 @@ export default function ParentDashboard({ onProgressUpdate }: ParentDashboardPro
         </div>
       </div>
 
-      {/* Grid Statistik Penguasaan */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      {/* Grid Statistik Penguasaan 4 Tahap Belajar */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
         {/* Modul 1: Huruf */}
         <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
           <div className="flex items-center justify-between mb-4">
@@ -203,6 +207,32 @@ export default function ParentDashboard({ onProgressUpdate }: ParentDashboardPro
           <div className="mt-4 pt-3 border-t border-slate-100 text-xs font-semibold text-slate-500 flex justify-between">
             <span>Dikuasai:</span>
             <span className="font-bold text-slate-800">{learnedWordsCount} dari {totalWords} kata</span>
+          </div>
+        </div>
+
+        {/* Modul 4: Membaca Kalimat */}
+        <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-4">
+            <div className="w-12 h-12 rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-xl font-black">
+              📖
+            </div>
+            <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-purple-100 text-purple-700">
+              {sentencePercentage}% Tuntas
+            </span>
+          </div>
+          <div>
+            <h4 className="text-base font-extrabold text-slate-800">Membaca Kalimat</h4>
+            <p className="text-xs text-slate-500 mb-3">30 Kalimat pendek bertema ramah anak</p>
+            <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+              <div
+                className="bg-purple-500 h-full rounded-full transition-all duration-500"
+                style={{ width: `${sentencePercentage}%` }}
+              />
+            </div>
+          </div>
+          <div className="mt-4 pt-3 border-t border-slate-100 text-xs font-semibold text-slate-500 flex justify-between">
+            <span>Dikuasai:</span>
+            <span className="font-bold text-slate-800">{learnedSentencesCount} dari {totalSentences} kalimat</span>
           </div>
         </div>
       </div>
