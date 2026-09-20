@@ -135,41 +135,21 @@ export default function Home() {
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-amber-200/70 shadow-sm relative">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
           {/* Logo & Brand (Klik untuk kembali ke Menu Utama) */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            <div
-              onClick={() => {
-                playClickSound();
-                setAppMode('kids');
-                setActiveTab('portal');
-              }}
-              className="flex items-center gap-2.5 cursor-pointer group"
-              title="Klik untuk ke Halaman Depan / Menu Utama"
-            >
-              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-400 to-orange-500 flex items-center justify-center text-white shadow-md shadow-amber-200 group-hover:scale-105 transition transform">
-                <Star className="w-5 h-5 fill-white" />
-              </div>
-              <div>
-                <h1 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight leading-none group-hover:text-orange-600 transition">
-                  RafaBintang<span className="text-orange-500">Baca</span>
-                </h1>
-                <span className="text-[10px] font-extrabold text-amber-600 tracking-wide uppercase">
-                  Portal Belajar TK
-                </span>
-              </div>
+          <div
+            onClick={() => {
+              playClickSound();
+              setAppMode('kids');
+              setActiveTab('portal');
+            }}
+            className="flex items-center gap-2.5 cursor-pointer group"
+            title="Klik untuk ke Halaman Depan / Menu Utama"
+          >
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-400 to-orange-500 flex items-center justify-center text-white shadow-md shadow-amber-200 group-hover:scale-105 transition transform">
+              <Star className="w-5 h-5 fill-white" />
             </div>
-
-            {/* Tombol Kembali ke Menu Utama di Header saat sedang membuka modul */}
-            {activeTab !== 'portal' && appMode === 'kids' && (
-              <button
-                onClick={() => handleTabChange('portal')}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 font-extrabold text-xs transition btn-kids-pop cursor-pointer shadow-2xs"
-                title="Kembali ke Menu Utama"
-              >
-                <ArrowLeft className="w-3.5 h-3.5" />
-                <HomeIcon className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Menu Utama</span>
-              </button>
-            )}
+            <h1 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight leading-none group-hover:text-orange-600 transition">
+              RafaBintang<span className="text-orange-500">Baca</span>
+            </h1>
           </div>
 
           {/* Profil Anak & Ganti Akun & Mode Switcher */}
