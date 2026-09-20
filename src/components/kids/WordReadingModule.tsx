@@ -5,7 +5,7 @@ import { READING_WORDS, ReadingWord } from '@/data/curriculum';
 import { speakWord, speakSyllable, spellAndSpeakWord, stopSpeech } from '@/lib/speech';
 import { playClickSound, playCorrectSound } from '@/lib/soundEffects';
 import { markWordLearned, getProgress, UserProgress } from '@/lib/storage';
-import { Volume2, Sparkles, CheckCircle, Star, Filter, Music } from 'lucide-react';
+import { Volume2, Sparkles, CheckCircle, Star, Filter, Music, BookOpen } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface WordReadingModuleProps {
@@ -20,11 +20,22 @@ export default function WordReadingModule({ onProgressUpdate }: WordReadingModul
 
   const progress: UserProgress = getProgress();
 
-  const filteredWords = READING_WORDS.filter((item) => {
-    if (item.level !== levelFilter) return false;
+  const wordsInCurrentLevel = READING_WORDS.filter((item) => item.level === levelFilter);
+  const level1Count = READING_WORDS.filter((item) => item.level === 1).length;
+  const level2Count = READING_WORDS.filter((item) => item.level === 2).length;
+
+  const filteredWords = wordsInCurrentLevel.filter((item) => {
     if (categoryFilter !== 'all' && item.category !== categoryFilter) return false;
     return true;
   });
+
+  const CATEGORY_ITEMS = [
+    { id: 'all', label: 'Semua', emoji: '🌟', count: wordsInCurrentLevel.length },
+    { id: 'benda', label: 'Benda', emoji: '👕', count: wordsInCurrentLevel.filter((w) => w.category === 'benda').length },
+    { id: 'hewan', label: 'Hewan', emoji: '🐴', count: wordsInCurrentLevel.filter((w) => w.category === 'hewan').length },
+    { id: 'makanan', label: 'Makanan', emoji: '🍎', count: wordsInCurrentLevel.filter((w) => w.category === 'makanan').length },
+    { id: 'tubuh', label: 'Tubuh', emoji: '👀', count: wordsInCurrentLevel.filter((w) => w.category === 'tubuh').length },
+  ];
 
   // Fitur Klik Suara per Suku Kata
   const handleSyllableClick = (wordId: string, syllable: string, idx: number, e: React.MouseEvent) => {
@@ -66,6 +77,7 @@ export default function WordReadingModule({ onProgressUpdate }: WordReadingModul
   };
 
   const handleMarkLearned = (item: ReadingWord) => {
+    if (progress.learnedWords.includes(item.word)) return;
     playCorrectSound();
     markWordLearned(item.word);
     confetti({
@@ -76,6 +88,21 @@ export default function WordReadingModule({ onProgressUpdate }: WordReadingModul
     onProgressUpdate();
   };
 
+  const getCategoryColor = (category: string) => {
+    switch (category) {
+      case 'benda':
+        return 'bg-blue-50 text-blue-600 border-blue-200';
+      case 'hewan':
+        return 'bg-emerald-50 text-emerald-600 border-emerald-200';
+      case 'makanan':
+        return 'bg-amber-50 text-amber-600 border-amber-200';
+      case 'tubuh':
+        return 'bg-rose-50 text-rose-600 border-rose-200';
+      default:
+        return 'bg-slate-50 text-slate-600 border-slate-200';
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Header Modul */}
@@ -83,7 +110,7 @@ export default function WordReadingModule({ onProgressUpdate }: WordReadingModul
         <div>
           <div className="inline-flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-sm font-semibold backdrop-blur-sm mb-2">
             <Sparkles className="w-4 h-4 text-yellow-200" />
-            Modul 3: Membaca Kata Bergambar
+            Modul 3: Membaca Kata Bergambar ({READING_WORDS.length} Kata)
           </div>
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
             Membaca Kata & Belajar Ejaan 📖
@@ -93,54 +120,73 @@ export default function WordReadingModule({ onProgressUpdate }: WordReadingModul
           </p>
         </div>
 
-        {/* Pilihan Level */}
-        <div className="flex bg-black/20 p-1.5 rounded-2xl gap-1">
-          <button
-            onClick={() => {
-              playClickSound();
-              setLevelFilter(1);
-            }}
-            className={`px-4 py-2 rounded-xl text-sm font-bold transition ${
-              levelFilter === 1 ? 'bg-white text-teal-700 shadow' : 'text-white/80 hover:text-white'
-            }`}
-          >
-            2 Suku Kata (Dasar)
-          </button>
-          <button
-            onClick={() => {
-              playClickSound();
-              setLevelFilter(2);
-            }}
-            className={`px-4 py-2 rounded-xl text-sm font-bold transition ${
-              levelFilter === 2 ? 'bg-white text-teal-700 shadow' : 'text-white/80 hover:text-white'
-            }`}
-          >
-            3 Suku Kata (Lanjutan)
-          </button>
+        {/* Info Progres & Pilihan Level */}
+        <div className="flex flex-col sm:flex-row items-center gap-3">
+          <div className="bg-white/15 backdrop-blur-sm px-4 py-2 rounded-2xl border border-white/20 flex items-center gap-2.5">
+            <BookOpen className="w-5 h-5 text-yellow-300" />
+            <div className="text-right">
+              <span className="text-xs text-teal-100 block">Dikuasai</span>
+              <span className="font-extrabold text-sm text-white">
+                {progress.learnedWords.length} / {READING_WORDS.length} Kata
+              </span>
+            </div>
+          </div>
+
+          <div className="flex bg-black/20 p-1.5 rounded-2xl gap-1">
+            <button
+              onClick={() => {
+                playClickSound();
+                setLevelFilter(1);
+              }}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
+                levelFilter === 1 ? 'bg-white text-teal-700 shadow' : 'text-white/80 hover:text-white'
+              }`}
+            >
+              2 Suku Kata ({level1Count})
+            </button>
+            <button
+              onClick={() => {
+                playClickSound();
+                setLevelFilter(2);
+              }}
+              className={`px-3.5 py-2 rounded-xl text-xs sm:text-sm font-bold transition ${
+                levelFilter === 2 ? 'bg-white text-teal-700 shadow' : 'text-white/80 hover:text-white'
+              }`}
+            >
+              3 Suku Kata ({level2Count})
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Filter Kategori */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 text-sm">
-        <span className="text-slate-400 font-bold flex items-center gap-1 pl-1">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 text-sm scrollbar-none">
+        <span className="text-slate-400 font-bold flex items-center gap-1 pl-1 whitespace-nowrap">
           <Filter className="w-4 h-4" /> Kategori:
         </span>
-        {['all', 'benda', 'hewan', 'makanan', 'tubuh'].map((cat) => (
-          <button
-            key={cat}
-            onClick={() => {
-              playClickSound();
-              setCategoryFilter(cat);
-            }}
-            className={`px-3.5 py-1.5 rounded-xl font-bold capitalize transition ${
-              categoryFilter === cat
-                ? 'bg-teal-600 text-white shadow-sm'
-                : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
-            }`}
-          >
-            {cat === 'all' ? '🌟 Semua' : cat}
-          </button>
-        ))}
+        {CATEGORY_ITEMS.map((cat) => {
+          const isActive = categoryFilter === cat.id;
+          return (
+            <button
+              key={cat.id}
+              onClick={() => {
+                playClickSound();
+                setCategoryFilter(cat.id);
+              }}
+              className={`flex items-center gap-1.5 px-3.5 py-2 rounded-xl font-bold capitalize transition whitespace-nowrap btn-kids-pop ${
+                isActive
+                  ? 'bg-teal-600 text-white shadow-sm'
+                  : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+              }`}
+            >
+              <span>{cat.emoji}</span>
+              <span>{cat.label}</span>
+              <span className={`text-xs px-1.5 py-0.5 rounded-full ${isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-500'}`}>
+                {cat.count}
+              </span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Grid Kartu Kata */}
@@ -148,6 +194,7 @@ export default function WordReadingModule({ onProgressUpdate }: WordReadingModul
         {filteredWords.map((item) => {
           const isLearned = progress.learnedWords.includes(item.word);
           const isSpeakingThis = activeSpeakingWordId === item.id;
+          const categoryStyle = getCategoryColor(item.category);
 
           // Warna warni balok suku kata
           const syllableBgColors = [
@@ -162,17 +209,19 @@ export default function WordReadingModule({ onProgressUpdate }: WordReadingModul
               className={`rounded-3xl p-5 bg-white border-2 transition shadow-sm hover:shadow-lg flex flex-col justify-between relative ${
                 isSpeakingThis
                   ? 'border-teal-500 ring-4 ring-teal-100'
+                  : isLearned
+                  ? 'border-emerald-200 bg-emerald-50/15'
                   : 'border-slate-100 hover:border-teal-200'
               }`}
             >
               {/* Badge Kategori & Bintang */}
               <div className="flex justify-between items-center mb-3">
-                <span className="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-100 text-slate-500">
+                <span className={`text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border ${categoryStyle}`}>
                   {item.category}
                 </span>
 
                 {isLearned && (
-                  <span className="flex items-center gap-1 text-xs font-bold text-amber-500 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
+                  <span className="flex items-center gap-1 text-xs font-bold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
                     <Star className="w-3.5 h-3.5 fill-amber-400" /> Hafal
                   </span>
                 )}
@@ -243,10 +292,15 @@ export default function WordReadingModule({ onProgressUpdate }: WordReadingModul
                   {/* Tombol Aku Sudah Bisa */}
                   <button
                     onClick={() => handleMarkLearned(item)}
-                    className="flex-1 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-600 text-white flex items-center justify-center gap-1.5 shadow-sm transition btn-kids-pop"
+                    disabled={isLearned}
+                    className={`flex-1 py-2 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition ${
+                      isLearned
+                        ? 'bg-emerald-100 text-emerald-700 cursor-default shadow-none'
+                        : 'bg-amber-500 hover:bg-amber-600 text-white shadow-sm btn-kids-pop'
+                    }`}
                   >
                     <CheckCircle className="w-3.5 h-3.5" />
-                    Bisa Baca (+2 ⭐)
+                    {isLearned ? 'Sudah Bisa ✓' : 'Bisa Baca (+2 ⭐)'}
                   </button>
                 </div>
               </div>

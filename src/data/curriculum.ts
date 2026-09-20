@@ -216,31 +216,93 @@ export const SYLLABLE_GROUPS: SyllableGroup[] = [
 
 // 3. DATA KATA BERGAMBAR (Level 1: 2 Suku Kata, Level 2: 3 Suku Kata)
 export const READING_WORDS: ReadingWord[] = [
-  // 2 Suku Kata
+  // ==========================================
+  // LEVEL 1: 2 SUKU KATA (DASAR - 40 KATA)
+  // ==========================================
+
+  // --- Kategori: Benda (12 Kata) ---
   { id: 'w1', word: 'baju', syllables: ['ba', 'ju'], emoji: '👕', category: 'benda', level: 1, phoneticHint: 'ba-ju' },
   { id: 'w2', word: 'bola', syllables: ['bo', 'la'], emoji: '⚽', category: 'benda', level: 1, phoneticHint: 'bo-la' },
   { id: 'w3', word: 'buku', syllables: ['bu', 'ku'], emoji: '📚', category: 'benda', level: 1, phoneticHint: 'bu-ku' },
-  { id: 'w4', word: 'kaki', syllables: ['ka', 'ki'], emoji: '🦶', category: 'tubuh', level: 1, phoneticHint: 'ka-ki' },
-  { id: 'w5', word: 'kuda', syllables: ['ku', 'da'], emoji: '🐴', category: 'hewan', level: 1, phoneticHint: 'ku-da' },
-  { id: 'w6', word: 'mata', syllables: ['ma', 'ta'], emoji: '👀', category: 'tubuh', level: 1, phoneticHint: 'ma-ta' },
-  { id: 'w7', word: 'meja', syllables: ['me', 'ja'], emoji: '🪑', category: 'benda', level: 1, phoneticHint: 'me-ja' },
-  { id: 'w8', word: 'roti', syllables: ['ro', 'ti'], emoji: '🍞', category: 'makanan', level: 1, phoneticHint: 'ro-ti' },
-  { id: 'w9', word: 'susu', syllables: ['su', 'su'], emoji: '🥛', category: 'makanan', level: 1, phoneticHint: 'su-su' },
-  { id: 'w10', word: 'topi', syllables: ['to', 'pi'], emoji: '🧢', category: 'benda', level: 1, phoneticHint: 'to-pi' },
-  { id: 'w11', word: 'gigi', syllables: ['gi', 'gi'], emoji: '🦷', category: 'tubuh', level: 1, phoneticHint: 'gi-gi' },
-  { id: 'w12', word: 'dadu', syllables: ['da', 'du'], emoji: '🎲', category: 'benda', level: 1, phoneticHint: 'da-du' },
-  { id: 'w13', word: 'ceri', syllables: ['ce', 'ri'], emoji: '🍒', category: 'makanan', level: 1, phoneticHint: 'ce-ri' },
-  { id: 'w14', word: 'sapu', syllables: ['sa', 'pu'], emoji: '🧹', category: 'benda', level: 1, phoneticHint: 'sa-pu' },
-  { id: 'w15', word: 'pita', syllables: ['pi', 'ta'], emoji: '🎀', category: 'benda', level: 1, phoneticHint: 'pi-ta' },
-  { id: 'w16', word: 'madu', syllables: ['ma', 'du'], emoji: '🍯', category: 'makanan', level: 1, phoneticHint: 'ma-du' },
+  { id: 'w4', word: 'meja', syllables: ['me', 'ja'], emoji: '🪑', category: 'benda', level: 1, phoneticHint: 'me-ja' },
+  { id: 'w5', word: 'topi', syllables: ['to', 'pi'], emoji: '🧢', category: 'benda', level: 1, phoneticHint: 'to-pi' },
+  { id: 'w6', word: 'dadu', syllables: ['da', 'du'], emoji: '🎲', category: 'benda', level: 1, phoneticHint: 'da-du' },
+  { id: 'w7', word: 'sapu', syllables: ['sa', 'pu'], emoji: '🧹', category: 'benda', level: 1, phoneticHint: 'sa-pu' },
+  { id: 'w8', word: 'pita', syllables: ['pi', 'ta'], emoji: '🎀', category: 'benda', level: 1, phoneticHint: 'pi-ta' },
+  { id: 'w9', word: 'roda', syllables: ['ro', 'da'], emoji: '🛞', category: 'benda', level: 1, phoneticHint: 'ro-da' },
+  { id: 'w10', word: 'tali', syllables: ['ta', 'li'], emoji: '🪢', category: 'benda', level: 1, phoneticHint: 'ta-li' },
+  { id: 'w11', word: 'paku', syllables: ['pa', 'ku'], emoji: '📌', category: 'benda', level: 1, phoneticHint: 'pa-ku' },
+  { id: 'w12', word: 'kaca', syllables: ['ka', 'ca'], emoji: '🪞', category: 'benda', level: 1, phoneticHint: 'ka-ca' },
 
-  // 3 Suku Kata
-  { id: 'w17', word: 'sepatu', syllables: ['se', 'pa', 'tu'], emoji: '👟', category: 'benda', level: 2, phoneticHint: 'se-pa-tu' },
-  { id: 'w18', word: 'kereta', syllables: ['ke', 're', 'ta'], emoji: '🚂', category: 'benda', level: 2, phoneticHint: 'ke-re-ta' },
-  { id: 'w19', word: 'sepeda', syllables: ['se', 'pe', 'da'], emoji: '🚲', category: 'benda', level: 2, phoneticHint: 'se-pe-da' },
-  { id: 'w20', word: 'kelapa', syllables: ['ke', 'la', 'pa'], emoji: '🥥', category: 'makanan', level: 2, phoneticHint: 'ke-la-pa' },
-  { id: 'w21', word: 'boneka', syllables: ['bo', 'ne', 'ka'], emoji: '🧸', category: 'benda', level: 2, phoneticHint: 'bo-ne-ka' },
-  { id: 'w22', word: 'kelinci', syllables: ['ke', 'lin', 'ci'], emoji: '🐰', category: 'hewan', level: 2, phoneticHint: 'ke-lin-ci' },
+  // --- Kategori: Hewan (10 Kata) ---
+  { id: 'w13', word: 'kuda', syllables: ['ku', 'da'], emoji: '🐴', category: 'hewan', level: 1, phoneticHint: 'ku-da' },
+  { id: 'w14', word: 'sapi', syllables: ['sa', 'pi'], emoji: '🐮', category: 'hewan', level: 1, phoneticHint: 'sa-pi' },
+  { id: 'w15', word: 'rusa', syllables: ['ru', 'sa'], emoji: '🦌', category: 'hewan', level: 1, phoneticHint: 'ru-sa' },
+  { id: 'w16', word: 'kera', syllables: ['ke', 'ra'], emoji: '🐒', category: 'hewan', level: 1, phoneticHint: 'ke-ra' },
+  { id: 'w17', word: 'unta', syllables: ['un', 'ta'], emoji: '🐪', category: 'hewan', level: 1, phoneticHint: 'un-ta' },
+  { id: 'w18', word: 'paus', syllables: ['pa', 'us'], emoji: '🐳', category: 'hewan', level: 1, phoneticHint: 'pa-us' },
+  { id: 'w19', word: 'naga', syllables: ['na', 'ga'], emoji: '🐉', category: 'hewan', level: 1, phoneticHint: 'na-ga' },
+  { id: 'w20', word: 'kutu', syllables: ['ku', 'tu'], emoji: '🪲', category: 'hewan', level: 1, phoneticHint: 'ku-tu' },
+  { id: 'w21', word: 'lele', syllables: ['le', 'le'], emoji: '🐟', category: 'hewan', level: 1, phoneticHint: 'le-le' },
+  { id: 'w22', word: 'singa', syllables: ['si', 'nga'], emoji: '🦁', category: 'hewan', level: 1, phoneticHint: 'si-nga' },
+
+  // --- Kategori: Makanan & Minuman (10 Kata) ---
+  { id: 'w23', word: 'roti', syllables: ['ro', 'ti'], emoji: '🍞', category: 'makanan', level: 1, phoneticHint: 'ro-ti' },
+  { id: 'w24', word: 'susu', syllables: ['su', 'su'], emoji: '🥛', category: 'makanan', level: 1, phoneticHint: 'su-su' },
+  { id: 'w25', word: 'ceri', syllables: ['ce', 'ri'], emoji: '🍒', category: 'makanan', level: 1, phoneticHint: 'ce-ri' },
+  { id: 'w26', word: 'madu', syllables: ['ma', 'du'], emoji: '🍯', category: 'makanan', level: 1, phoneticHint: 'ma-du' },
+  { id: 'w27', word: 'nasi', syllables: ['na', 'si'], emoji: '🍚', category: 'makanan', level: 1, phoneticHint: 'na-si' },
+  { id: 'w28', word: 'sate', syllables: ['sa', 'te'], emoji: '🍢', category: 'makanan', level: 1, phoneticHint: 'sa-te' },
+  { id: 'w29', word: 'keju', syllables: ['ke', 'ju'], emoji: '🧀', category: 'makanan', level: 1, phoneticHint: 'ke-ju' },
+  { id: 'w30', word: 'bolu', syllables: ['bo', 'lu'], emoji: '🧁', category: 'makanan', level: 1, phoneticHint: 'bo-lu' },
+  { id: 'w31', word: 'kopi', syllables: ['ko', 'pi'], emoji: '☕', category: 'makanan', level: 1, phoneticHint: 'ko-pi' },
+  { id: 'w32', word: 'gula', syllables: ['gu', 'la'], emoji: '🍬', category: 'makanan', level: 1, phoneticHint: 'gu-la' },
+
+  // --- Kategori: Tubuh (8 Kata) ---
+  { id: 'w33', word: 'kaki', syllables: ['ka', 'ki'], emoji: '🦶', category: 'tubuh', level: 1, phoneticHint: 'ka-ki' },
+  { id: 'w34', word: 'mata', syllables: ['ma', 'ta'], emoji: '👀', category: 'tubuh', level: 1, phoneticHint: 'ma-ta' },
+  { id: 'w35', word: 'gigi', syllables: ['gi', 'gi'], emoji: '🦷', category: 'tubuh', level: 1, phoneticHint: 'gi-gi' },
+  { id: 'w36', word: 'pipi', syllables: ['pi', 'pi'], emoji: '😊', category: 'tubuh', level: 1, phoneticHint: 'pi-pi' },
+  { id: 'w37', word: 'kuku', syllables: ['ku', 'ku'], emoji: '💅', category: 'tubuh', level: 1, phoneticHint: 'ku-ku' },
+  { id: 'w38', word: 'dahi', syllables: ['da', 'hi'], emoji: '👦', category: 'tubuh', level: 1, phoneticHint: 'da-hi' },
+  { id: 'w39', word: 'dagu', syllables: ['da', 'gu'], emoji: '🧔', category: 'tubuh', level: 1, phoneticHint: 'da-gu' },
+  { id: 'w40', word: 'bahu', syllables: ['ba', 'hu'], emoji: '💪', category: 'tubuh', level: 1, phoneticHint: 'ba-hu' },
+
+  // ==========================================
+  // LEVEL 2: 3 SUKU KATA (LANJUTAN - 24 KATA)
+  // ==========================================
+
+  // --- Kategori: Benda (8 Kata) ---
+  { id: 'w41', word: 'sepatu', syllables: ['se', 'pa', 'tu'], emoji: '👟', category: 'benda', level: 2, phoneticHint: 'se-pa-tu' },
+  { id: 'w42', word: 'kereta', syllables: ['ke', 're', 'ta'], emoji: '🚂', category: 'benda', level: 2, phoneticHint: 'ke-re-ta' },
+  { id: 'w43', word: 'sepeda', syllables: ['se', 'pe', 'da'], emoji: '🚲', category: 'benda', level: 2, phoneticHint: 'se-pe-da' },
+  { id: 'w44', word: 'boneka', syllables: ['bo', 'ne', 'ka'], emoji: '🧸', category: 'benda', level: 2, phoneticHint: 'bo-ne-ka' },
+  { id: 'w45', word: 'perahu', syllables: ['pe', 'ra', 'hu'], emoji: '⛵', category: 'benda', level: 2, phoneticHint: 'pe-ra-hu' },
+  { id: 'w46', word: 'kemeja', syllables: ['ke', 'me', 'ja'], emoji: '👔', category: 'benda', level: 2, phoneticHint: 'ke-me-ja' },
+  { id: 'w47', word: 'celana', syllables: ['ce', 'la', 'na'], emoji: '👖', category: 'benda', level: 2, phoneticHint: 'ce-la-na' },
+  { id: 'w48', word: 'kamera', syllables: ['ka', 'me', 'ra'], emoji: '📷', category: 'benda', level: 2, phoneticHint: 'ka-me-ra' },
+
+  // --- Kategori: Hewan (6 Kata) ---
+  { id: 'w49', word: 'kelinci', syllables: ['ke', 'lin', 'ci'], emoji: '🐰', category: 'hewan', level: 2, phoneticHint: 'ke-lin-ci' },
+  { id: 'w50', word: 'jerapah', syllables: ['je', 'ra', 'pah'], emoji: '🦒', category: 'hewan', level: 2, phoneticHint: 'je-ra-pah' },
+  { id: 'w51', word: 'harimau', syllables: ['ha', 'ri', 'mau'], emoji: '🐯', category: 'hewan', level: 2, phoneticHint: 'ha-ri-mau' },
+  { id: 'w52', word: 'gorila', syllables: ['go', 'ri', 'la'], emoji: '🦍', category: 'hewan', level: 2, phoneticHint: 'go-ri-la' },
+  { id: 'w53', word: 'merpati', syllables: ['mer', 'pa', 'ti'], emoji: '🕊️', category: 'hewan', level: 2, phoneticHint: 'mer-pa-ti' },
+  { id: 'w54', word: 'serangga', syllables: ['se', 'rang', 'ga'], emoji: '🦗', category: 'hewan', level: 2, phoneticHint: 'se-rang-ga' },
+
+  // --- Kategori: Makanan & Buah (6 Kata) ---
+  { id: 'w55', word: 'kelapa', syllables: ['ke', 'la', 'pa'], emoji: '🥥', category: 'makanan', level: 2, phoneticHint: 'ke-la-pa' },
+  { id: 'w56', word: 'pepaya', syllables: ['pe', 'pa', 'ya'], emoji: '🍈', category: 'makanan', level: 2, phoneticHint: 'pe-pa-ya' },
+  { id: 'w57', word: 'alpukat', syllables: ['al', 'pu', 'kat'], emoji: '🥑', category: 'makanan', level: 2, phoneticHint: 'al-pu-kat' },
+  { id: 'w58', word: 'semangka', syllables: ['se', 'mang', 'ka'], emoji: '🍉', category: 'makanan', level: 2, phoneticHint: 'se-mang-ka' },
+  { id: 'w59', word: 'stroberi', syllables: ['stro', 'be', 'ri'], emoji: '🍓', category: 'makanan', level: 2, phoneticHint: 'stro-be-ri' },
+  { id: 'w60', word: 'mentega', syllables: ['men', 'te', 'ga'], emoji: '🧈', category: 'makanan', level: 2, phoneticHint: 'men-te-ga' },
+
+  // --- Kategori: Tubuh (4 Kata) ---
+  { id: 'w61', word: 'telinga', syllables: ['te', 'ling', 'a'], emoji: '👂', category: 'tubuh', level: 2, phoneticHint: 'te-ling-a' },
+  { id: 'w62', word: 'kepala', syllables: ['ke', 'pa', 'la'], emoji: '🗣️', category: 'tubuh', level: 2, phoneticHint: 'ke-pa-la' },
+  { id: 'w63', word: 'jemari', syllables: ['je', 'ma', 'ri'], emoji: '🖐️', category: 'tubuh', level: 2, phoneticHint: 'je-ma-ri' },
+  { id: 'w64', word: 'telapak', syllables: ['te', 'la', 'pak'], emoji: '✋', category: 'tubuh', level: 2, phoneticHint: 'te-la-pak' },
 ];
 
 // 4. DATA KALIMAT SEDERHANA (30 Kalimat Latihan Membaca Anak TK)
