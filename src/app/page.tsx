@@ -135,26 +135,41 @@ export default function Home() {
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-amber-200/70 shadow-sm relative">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
           {/* Logo & Brand (Klik untuk kembali ke Menu Utama) */}
-          <div
-            onClick={() => {
-              playClickSound();
-              setAppMode('kids');
-              setActiveTab('portal');
-            }}
-            className="flex items-center gap-2.5 cursor-pointer group"
-            title="Klik untuk ke Halaman Depan / Menu Utama"
-          >
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-400 to-orange-500 flex items-center justify-center text-white shadow-md shadow-amber-200 group-hover:scale-105 transition transform">
-              <Star className="w-5 h-5 fill-white" />
+          <div className="flex items-center gap-2 sm:gap-3">
+            <div
+              onClick={() => {
+                playClickSound();
+                setAppMode('kids');
+                setActiveTab('portal');
+              }}
+              className="flex items-center gap-2.5 cursor-pointer group"
+              title="Klik untuk ke Halaman Depan / Menu Utama"
+            >
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-400 to-orange-500 flex items-center justify-center text-white shadow-md shadow-amber-200 group-hover:scale-105 transition transform">
+                <Star className="w-5 h-5 fill-white" />
+              </div>
+              <div>
+                <h1 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight leading-none group-hover:text-orange-600 transition">
+                  RafaBintang<span className="text-orange-500">Baca</span>
+                </h1>
+                <span className="text-[10px] font-extrabold text-amber-600 tracking-wide uppercase">
+                  Portal Belajar TK
+                </span>
+              </div>
             </div>
-            <div>
-              <h1 className="text-xl sm:text-2xl font-black text-slate-800 tracking-tight leading-none group-hover:text-orange-600 transition">
-                RafaBintang<span className="text-orange-500">Baca</span>
-              </h1>
-              <span className="text-[10px] font-extrabold text-amber-600 tracking-wide uppercase">
-                Portal Belajar TK
-              </span>
-            </div>
+
+            {/* Tombol Kembali ke Menu Utama di Header saat sedang membuka modul */}
+            {activeTab !== 'portal' && appMode === 'kids' && (
+              <button
+                onClick={() => handleTabChange('portal')}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-orange-50 hover:bg-orange-100 text-orange-700 border border-orange-200 font-extrabold text-xs transition btn-kids-pop cursor-pointer shadow-2xs"
+                title="Kembali ke Menu Utama"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <HomeIcon className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">Menu Utama</span>
+              </button>
+            )}
           </div>
 
           {/* Profil Anak & Ganti Akun & Mode Switcher */}
@@ -210,47 +225,6 @@ export default function Home() {
             </div>
           </div>
         </div>
-
-        {/* Tab Navigasi Mode Anak */}
-        {appMode === 'kids' && (
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-1 pb-3 overflow-x-auto scrollbar-none flex items-center gap-2">
-            {/* Tombol Menu Utama / Beranda */}
-            <button
-              onClick={() => handleTabChange('portal')}
-              className={`flex-shrink-0 px-4 py-2 rounded-2xl font-black text-xs sm:text-sm transition flex items-center gap-1.5 btn-kids-pop ${
-                activeTab === 'portal'
-                  ? 'bg-gradient-to-r from-orange-500 to-amber-500 text-white shadow-md shadow-orange-200'
-                  : 'bg-white text-slate-700 hover:bg-amber-50 border border-amber-200'
-              }`}
-            >
-              <HomeIcon className="w-4 h-4 text-inherit" />
-              <span>Menu Utama</span>
-            </button>
-
-            {/* Separator Halus */}
-            <div className="h-5 w-[1px] bg-amber-200/80 mx-1 flex-shrink-0" />
-
-            {/* 6 Tab Modul */}
-            {navTabs.map((tab) => {
-              const isActive = activeTab === tab.id;
-
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => handleTabChange(tab.id)}
-                  className={`flex-shrink-0 px-3.5 py-2 rounded-2xl font-extrabold text-xs sm:text-sm transition flex items-center gap-2 btn-kids-pop ${
-                    isActive
-                      ? `${tab.color} text-white shadow-md`
-                      : 'bg-white text-slate-600 hover:bg-slate-50 border border-slate-200'
-                  }`}
-                >
-                  <span className="text-base">{tab.emoji}</span>
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        )}
       </header>
 
       {/* Main Content */}
