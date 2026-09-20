@@ -49,6 +49,74 @@ let currentAudio: HTMLAudioElement | null = null;
 let currentSequenceId = 0;
 let currentSpeechId = 0;
 let activeUtterance: SpeechSynthesisUtterance | null = null;
+let cachedVoices: SpeechSynthesisVoice[] = [];
+
+/**
+ * Preload & cache daftar suara dari browser
+ */
+function loadBrowserVoices() {
+  if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+    const list = window.speechSynthesis.getVoices();
+    if (list && list.length > 0) {
+      cachedVoices = list;
+    }
+  }
+}
+
+// Inisialisasi awal saat modul dimuat di browser
+if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+  loadBrowserVoices();
+  if (window.speechSynthesis.onvoiceschanged !== undefined) {
+    window.speechSynthesis.onvoiceschanged = loadBrowserVoices;
+  }
+
+  // Buka blokir audio (unlock) pada sentuhan/klik pertama di perangkat mobile
+  const unlockAudioOnMobile = () => {
+    try {
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
+      }
+    } catch (e) {
+      // ignore
+    }
+    document.removeEventListener('click', unlockAudioOnMobile);
+    document.removeEventListener('touchstart', unlockAudioOnMobile);
+  };
+  document.addEventListener('click', unlockAudioOnMobile, { passive: true });
+  document.addEventListener('touchstart', unlockAudioOnMobile, { passive: true });
+}
+
+/**
+ * Cari suara bahasa Indonesia terbaik yang tersedia di browser/perangkat
+ */
+function getBestIndonesianVoice(): SpeechSynthesisVoice | null {
+  if (typeof window === 'undefined' || !('speechSynthesis' in window)) return null;
+  const voices = cachedVoices.length > 0 ? cachedVoices : window.speechSynthesis.getVoices();
+  if (!voices || voices.length === 0) return null;
+
+  // 1. Cari suara bahasa Indonesia murni (id-ID)
+  const idVoice = voices.find(
+    (v) =>
+      v.lang.toLowerCase() === 'id-id' ||
+      v.lang.toLowerCase() === 'id' ||
+      v.lang.toLowerCase().startsWith('id_') ||
+      v.lang.toLowerCase().startsWith('id-') ||
+      v.name.toLowerCase().includes('indonesia')
+  );
+  if (idVoice) return idVoice;
+
+  // 2. Cari suara Melayu (ms-MY) yang pelafalan fonetiknya sangat mirip
+  const msVoice = voices.find(
+    (v) =>
+      v.lang.toLowerCase() === 'ms-my' ||
+      v.lang.toLowerCase() === 'ms' ||
+      v.lang.toLowerCase().startsWith('ms') ||
+      v.name.toLowerCase().includes('malay')
+  );
+  if (msVoice) return msVoice;
+
+  return null;
+}
 
 /**
  * Mendapatkan pelafalan fonik bersih untuk huruf alfabet (selalu lowercase agar TTS tidak mengeja 'huruf besar')
@@ -141,98 +209,20 @@ export function stopSpeech() {
 }
 
 /**
- * Fallback jika audio online gagal/offline menggunakan Web Speech API internal browser
- */
-function speakWithWebSpeech(
-  text: string,
-  settings: SpeechSettings,
-  onEnd?: () => void
-) {
-  if (typeof window === 'undefined' || !('speechSynthesis' in window)) {
-    if (onEnd) onEnd();
-    return;
-  }
-
-  try {
-    // Unpause jika sempat macet dan bersihkan antrean sebelumnya agar tidak dobel
-    if (window.speechSynthesis.paused) {
-      window.speechSynthesis.resume();
-    }
-    window.speechSynthesis.cancel();
-
-    const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = settings.rate;
-    utterance.pitch = settings.pitch;
-    utterance.volume = settings.volume;
-
-    const voices = window.speechSynthesis.getVoices();
-    // Cari suara Indonesia (id-ID) atau Melayu (ms-MY)
-    const idVoice = voices.find(
-      (v) =>
-        v.lang.toLowerCase() === 'id-id' ||
-        v.lang.toLowerCase() === 'id' ||
-        v.lang.toLowerCase().startsWith('id_') ||
-        v.lang.toLowerCase().startsWith('id-') ||
-        v.name.toLowerCase().includes('indonesia')
-    );
-    const msVoice = voices.find((v) => v.lang.toLowerCase().startsWith('ms'));
-
-    if (idVoice) {
-      utterance.voice = idVoice;
-      utterance.lang = idVoice.lang;
-    } else if (msVoice) {
-      utterance.voice = msVoice;
-      utterance.lang = msVoice.lang;
-    } else {
-      utterance.lang = 'id-ID';
-    }
-
-    let finished = false;
-    const handleFinish = () => {
-      if (!finished) {
-        finished = true;
-        activeUtterance = null;
-        if (onEnd) onEnd();
-      }
-    };
-
-    utterance.onend = handleFinish;
-    utterance.onerror = (err) => {
-      console.warn('SpeechSynthesis error:', err);
-      handleFinish();
-    };
-
-    // Safety timeout untuk mencegah macet di Chrome
-    const estimatedDuration = Math.max(1200, (text.length / 4) * 1000 * (1 / settings.rate) + 800);
-    setTimeout(() => {
-      if (!finished) handleFinish();
-    }, estimatedDuration);
-
-    activeUtterance = utterance;
-    window.speechSynthesis.speak(utterance);
-  } catch (err) {
-    console.error('Gagal memutar Web Speech fallback:', err);
-    if (onEnd) onEnd();
-  }
-}
-
-/**
  * Membunyikan teks apapun dengan suara bahasa Indonesia bertempo ramah anak
- * Menjamin suara hanya diputar TEPAT 1 KALI (tanpa pengulangan / double trigger)
+ * Didesain khusus agar bekerja 100% di semua perangkat (Desktop, Android, iOS / iPhone)
+ * Mematuhi aturan User Gesture browser mobile tanpa delay network
  */
 export function speakText(
   text: string,
   customSettings?: Partial<SpeechSettings>,
   onEnd?: () => void
 ): boolean {
-  if (!isSpeechSupported()) {
-    console.warn('Audio tidak didukung di browser ini.');
-    return false;
-  }
+  if (typeof window === 'undefined') return false;
 
-  // Hentikan suara yang sedang aktif dan tandai ID invocation baru
+  // Hentikan suara yang sedang aktif dan tandai ID pemutaran baru
   stopSpeech();
-  const speechId = currentSpeechId;
+  const speechId = ++currentSpeechId;
 
   const currentSavedRate = getSavedSpeechRate();
   const effectiveRate = customSettings?.rate ?? currentSavedRate;
@@ -248,70 +238,95 @@ export function speakText(
     return true;
   }
 
-  // Penjaga ketat: Cegah eksekusi audio dan fallback berjalan bersamaan atau dobel
-  let isExecuted = false;
-
-  const handleComplete = () => {
-    if (speechId !== currentSpeechId) return;
-    if (isExecuted) return;
-    isExecuted = true;
-    currentAudio = null;
-    if (onEnd) onEnd();
-  };
-
-  const handleFallback = () => {
-    if (speechId !== currentSpeechId) return;
-    if (isExecuted) return;
-    isExecuted = true;
-
-    // Bersihkan Audio Element sebelum beralih ke Web Speech API
-    if (currentAudio) {
-      try {
-        currentAudio.onended = null;
-        currentAudio.onerror = null;
-        currentAudio.pause();
-        currentAudio.src = '';
-      } catch (e) {
-        // ignore
+  // 1. ENGINE UTAMA: Native Web Speech API (Langsung & Sinkron)
+  // Dipanggil langsung saat sentuhan jari (User Gesture) sehingga tidak diblokir browser HP (iOS Safari / Android Chrome)
+  if ('speechSynthesis' in window) {
+    try {
+      if (window.speechSynthesis.paused) {
+        window.speechSynthesis.resume();
       }
-      currentAudio = null;
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(cleanText);
+      utterance.rate = settings.rate;
+      utterance.pitch = settings.pitch;
+      utterance.volume = settings.volume;
+
+      // Pasang suara Indonesia terbaik
+      const bestVoice = getBestIndonesianVoice();
+      if (bestVoice) {
+        utterance.voice = bestVoice;
+        utterance.lang = bestVoice.lang;
+      } else {
+        utterance.lang = 'id-ID';
+      }
+
+      let finished = false;
+      const handleFinish = () => {
+        if (!finished) {
+          finished = true;
+          activeUtterance = null;
+          if (speechId === currentSpeechId && onEnd) {
+            onEnd();
+          }
+        }
+      };
+
+      utterance.onend = handleFinish;
+      utterance.onerror = (err) => {
+        console.warn('SpeechSynthesis error:', err);
+        handleFinish();
+      };
+
+      // Simpan di variabel global agar tidak terhapus Garbage Collector di Chrome Android
+      activeUtterance = utterance;
+
+      // Timeout pengaman jika browser lupa menembakkan onend
+      const estimatedDuration = Math.max(1200, (cleanText.length / 4) * 1000 * (1 / settings.rate) + 800);
+      setTimeout(() => {
+        if (!finished && speechId === currentSpeechId) {
+          handleFinish();
+        }
+      }, estimatedDuration);
+
+      window.speechSynthesis.speak(utterance);
+      return true;
+    } catch (e) {
+      console.warn('Web Speech API gagal, mencoba fallback HTML5 Audio:', e);
     }
+  }
 
-    speakWithWebSpeech(cleanText, settings, onEnd);
-  };
-
+  // 2. ENGINE CADANGAN: HTML5 Audio (jika browser sangat lawas / tidak punya Web Speech API)
   try {
     const encodedText = encodeURIComponent(cleanText);
     const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodedText}&tl=id&client=tw-ob`;
 
     const audio = new Audio(ttsUrl);
     currentAudio = audio;
-
-    // Sesuaikan kecepatan putar
     audio.playbackRate = Math.max(0.65, Math.min(1.2, settings.rate * 1.15));
 
     audio.onended = () => {
-      handleComplete();
+      currentAudio = null;
+      if (speechId === currentSpeechId && onEnd) onEnd();
     };
 
     audio.onerror = () => {
-      // Jika Google TTS gagal/offline/dibatasi browser, gunakan Web Speech API tepat satu kali
-      handleFallback();
+      currentAudio = null;
+      if (speechId === currentSpeechId && onEnd) onEnd();
     };
 
     const playPromise = audio.play();
     if (playPromise !== undefined) {
-      playPromise.catch((err) => {
-        // Autoplay dibatasi atau request diblokir, gunakan Web Speech API tepat satu kali
-        handleFallback();
+      playPromise.catch(() => {
+        currentAudio = null;
+        if (speechId === currentSpeechId && onEnd) onEnd();
       });
     }
 
     return true;
   } catch (e) {
-    console.warn('HTML5 Audio gagal, beralih ke Web Speech API:', e);
-    handleFallback();
-    return true;
+    if (onEnd) onEnd();
+    return false;
   }
 }
 
