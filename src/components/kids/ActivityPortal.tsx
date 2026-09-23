@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { STICKER_COLLECTION } from '@/data/curriculum';
 import { UserProgress } from '@/lib/storage';
 import { playClickSound } from '@/lib/soundEffects';
 import {
@@ -221,23 +222,23 @@ export default function ActivityPortal({
       tag: 'Modul 6',
       title: 'Album Stiker',
       emoji: '🏆',
-      subtitle: '8 Stiker Koleksi Karakter Lucu',
+      subtitle: `${STICKER_COLLECTION.length} Stiker Prestasi & Hadiah`,
       visualPreview: (
         <div className="flex items-center justify-center gap-1.5 py-1">
-          {['🦁', '🐰', '🐱', '🐼', '🐻'].map((animal, i) => (
+          {['🦁', '🚀', '🍎', '👑', '🏆'].map((item, i) => (
             <div
-              key={animal}
+              key={item}
               className={`w-9 h-9 rounded-2xl bg-amber-100 border border-amber-300 flex items-center justify-center text-xl shadow-xs transform hover:scale-125 transition ${
                 i % 2 === 0 ? '-rotate-6' : 'rotate-6'
               }`}
             >
-              {animal}
+              {item}
             </div>
           ))}
         </div>
       ),
       currentProgress: stickersUnlocked,
-      maxProgress: 8,
+      maxProgress: STICKER_COLLECTION.length,
       unit: 'Stiker',
       gradient: 'from-amber-400 to-yellow-500',
       iconBg: 'bg-amber-100 text-amber-800 border-amber-300',
@@ -303,7 +304,7 @@ export default function ActivityPortal({
             <div className="flex-1 min-w-[90px] bg-white/95 rounded-2xl p-2.5 border border-amber-200 shadow-sm text-center">
               <div className="flex items-center justify-center gap-1 text-yellow-600">
                 <Trophy className="w-4 h-4" />
-                <span className="text-lg font-black text-slate-800">{stickersUnlocked}/8</span>
+                <span className="text-lg font-black text-slate-800">{stickersUnlocked}/{STICKER_COLLECTION.length}</span>
               </div>
               <span className="text-[11px] font-extrabold text-slate-500">Stiker</span>
             </div>

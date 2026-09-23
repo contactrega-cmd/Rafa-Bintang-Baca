@@ -46,6 +46,7 @@ export interface Sticker {
   description: string;
   emoji: string;
   unlockedAtStars: number;
+  category?: 'hewan' | 'petualang' | 'buah' | 'piala';
 }
 
 // 1. DATA HURUF A - Z
@@ -648,14 +649,45 @@ export const SIMPLE_SENTENCES: SimpleSentence[] = [
   },
 ];
 
-// 5. STIKER PRESTASI / PENGHARGAAN
+// 5. STIKER PRESTASI / PENGHARGAAN (TOTAL 32 STIKER DALAM 4 KATEGORI)
 export const STICKER_COLLECTION: Sticker[] = [
-  { id: 'stk_1', title: 'Langkah Pertama', description: 'Memulai petualangan membaca', emoji: '🌱', unlockedAtStars: 1 },
-  { id: 'stk_2', title: 'Bintang Vokal', description: 'Mengenal huruf A, I, U, E, O', emoji: '⭐', unlockedAtStars: 5 },
-  { id: 'stk_3', title: 'Jagoan Huruf', description: 'Mempelajari 10 huruf alfabet', emoji: '🦁', unlockedAtStars: 10 },
-  { id: 'stk_4', title: 'Teman Suku Kata', description: 'Mengeja suku kata ba-bi-bu', emoji: '🐥', unlockedAtStars: 18 },
-  { id: 'stk_5', title: 'Pembaca Hebat', description: 'Membaca 10 kata bergambar', emoji: '🚀', unlockedAtStars: 25 },
-  { id: 'stk_6', title: 'Detektif Kata', description: 'Menyelesaikan kuis tanpa salah', emoji: '🕵️', unlockedAtStars: 35 },
-  { id: 'stk_7', title: 'Kutu Buku Cilik', description: 'Membaca kalimat pendek lancar', emoji: '📚', unlockedAtStars: 50 },
-  { id: 'stk_8', title: 'Juara Bintang Emas', description: 'Mengumpulkan 75 bintang kehormatan', emoji: '👑', unlockedAtStars: 75 },
+  // 🐾 Kategori 1: Sahabat Satwa Cilik (8 Stiker)
+  { id: 'stk_rabbit', title: 'Kelinci Lincah', description: 'Melompat ceria belajar huruf', emoji: '🐰', unlockedAtStars: 3, category: 'hewan' },
+  { id: 'stk_cat', title: 'Kucing Pintar', description: 'Cerdik menyusun suku kata', emoji: '🐱', unlockedAtStars: 8, category: 'hewan' },
+  { id: 'stk_3', title: 'Singa Pemberani', description: 'Maju berani membaca kata', emoji: '🦁', unlockedAtStars: 10, category: 'hewan' },
+  { id: 'stk_4', title: 'Anak Ayam Ceria', description: 'Riang membaca kalimat baru', emoji: '🐥', unlockedAtStars: 18, category: 'hewan' },
+  { id: 'stk_panda', title: 'Panda Penyabar', description: 'Tekun mengeja kata bergambar', emoji: '🐼', unlockedAtStars: 25, category: 'hewan' },
+  { id: 'stk_bear', title: 'Beruang Bijak', description: 'Sabar memahami ejaan panjang', emoji: '🐻', unlockedAtStars: 55, category: 'hewan' },
+  { id: 'stk_dolphin', title: 'Lumba-Lumba Ramah', description: 'Lincah menaklukkan kuis', emoji: '🐬', unlockedAtStars: 85, category: 'hewan' },
+  { id: 'stk_owl', title: 'Burung Hantu Cendekia', description: 'Daya ingat kuat dan pintar', emoji: '🦉', unlockedAtStars: 120, category: 'hewan' },
+
+  // 🚀 Kategori 2: Petualang Cilik (8 Stiker)
+  { id: 'stk_1', title: 'Tunas Pertama', description: 'Langkah awal bertumbuh pintar', emoji: '🌱', unlockedAtStars: 1, category: 'petualang' },
+  { id: 'stk_2', title: 'Bintang Bercahaya', description: 'Terang menghafal vokal fonik', emoji: '⭐', unlockedAtStars: 5, category: 'petualang' },
+  { id: 'stk_balloon', title: 'Balon Udara', description: 'Terbang tinggi bersama kata baru', emoji: '🎈', unlockedAtStars: 15, category: 'petualang' },
+  { id: 'stk_5', title: 'Roket Penjelajah', description: 'Melesat cepat membaca suku kata', emoji: '🚀', unlockedAtStars: 30, category: 'petualang' },
+  { id: 'stk_compass', title: 'Kompas Ajaib', description: 'Selalu menemukan jawaban tepat', emoji: '🧭', unlockedAtStars: 50, category: 'petualang' },
+  { id: 'stk_rainbow', title: 'Pelangi Ceria', description: 'Mewarnai hari dengan cerita seru', emoji: '🌈', unlockedAtStars: 75, category: 'petualang' },
+  { id: 'stk_telescope', title: 'Teropong Angkasa', description: 'Berwawasan luas dan ingin tahu', emoji: '🔭', unlockedAtStars: 110, category: 'petualang' },
+  { id: 'stk_superhero', title: 'Pahlawan Membaca', description: 'Tangguh membaca tanpa ragu', emoji: '🦸', unlockedAtStars: 160, category: 'petualang' },
+
+  // 🍎 Kategori 3: Buah & Alam Ceria (8 Stiker)
+  { id: 'stk_apple', title: 'Apel Merah Segar', description: 'Manis dan penuh energi belajar', emoji: '🍎', unlockedAtStars: 2, category: 'buah' },
+  { id: 'stk_banana', title: 'Pisang Ceria', description: 'Siap mengupas rahasia fonik', emoji: '🍌', unlockedAtStars: 12, category: 'buah' },
+  { id: 'stk_strawberry', title: 'Stroberi Lucu', description: 'Semangat membaca kata benda', emoji: '🍓', unlockedAtStars: 22, category: 'buah' },
+  { id: 'stk_cherry', title: 'Ceri Sahabat', description: 'Kompak mengeja balok warna', emoji: '🍒', unlockedAtStars: 45, category: 'buah' },
+  { id: 'stk_orange', title: 'Jeruk Segar', description: 'Penuh vitamin kecerdasan', emoji: '🍊', unlockedAtStars: 68, category: 'buah' },
+  { id: 'stk_sunflower', title: 'Bunga Matahari', description: 'Selalu mekar menyambut hari', emoji: '🌻', unlockedAtStars: 95, category: 'buah' },
+  { id: 'stk_icecream', title: 'Es Krim Pelangi', description: 'Hadiah manis ketekunan membaca', emoji: '🍦', unlockedAtStars: 140, category: 'buah' },
+  { id: 'stk_cupcake', title: 'Kue Juara Cilik', description: 'Hadiah pesta pembaca hebat', emoji: '🧁', unlockedAtStars: 185, category: 'buah' },
+
+  // 👑 Kategori 4: Mahkota & Piala Juara (8 Stiker)
+  { id: 'stk_clover', title: 'Semanggi Juara', description: 'Semangat pantang menyerah', emoji: '🍀', unlockedAtStars: 16, category: 'piala' },
+  { id: 'stk_medal_bronze', title: 'Medali Perunggu', description: 'Pencapaian hebat pembaca pemula', emoji: '🥉', unlockedAtStars: 40, category: 'piala' },
+  { id: 'stk_6', title: 'Detektif Kata', description: 'Cepat menemukan kata yang dicari', emoji: '🕵️', unlockedAtStars: 60, category: 'piala' },
+  { id: 'stk_medal_silver', title: 'Medali Perak', description: 'Lancar membaca kalimat mandiri', emoji: '🥈', unlockedAtStars: 90, category: 'piala' },
+  { id: 'stk_7', title: 'Kutu Buku Cilik', description: 'Gemar membaca cerita setiap hari', emoji: '📚', unlockedAtStars: 130, category: 'piala' },
+  { id: 'stk_medal_gold', title: 'Medali Emas Kehormatan', description: 'Juara membaca kata dan kalimat', emoji: '🥇', unlockedAtStars: 175, category: 'piala' },
+  { id: 'stk_8', title: 'Mahkota Emas Juara', description: 'Raja & Ratu pembaca cilik TK', emoji: '👑', unlockedAtStars: 225, category: 'piala' },
+  { id: 'stk_trophy', title: 'Piala Utama Bintang', description: 'Puncak prestasi kehormatan membaca', emoji: '🏆', unlockedAtStars: 275, category: 'piala' },
 ];
